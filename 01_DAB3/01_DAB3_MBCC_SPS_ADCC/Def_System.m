@@ -18,8 +18,7 @@
 %                                     % 3: Split: half start, half end
 %
 % Establishment: 11.05.2020 Huixue Liu, PGS, RWTH Aachen
-% Last change:   20.09.2020 Huixue Liu, PGS, RWTH Aachen
-    
+% Last change:   10.10.2020 Zhiqing Yang, PGS, RWTH Aachen
 % ########################################################################
 
 %% Parameters definition
@@ -27,16 +26,15 @@
 % Simulation parameters
 simtime = 0.1;                               % [s] simulation time in Plecs      
 
-% Object of Three Phase DAB
+% Define DAB parameter
 DAB3 = Def_DAB3();
 
-% Object of controller 
-Ctrl = Def_Ctrl(DAB3);
+% Define modulator
+Mod = Def_Mod(DAB3);
 
-% Object of modulator
-Mod = Def_Mod(DAB3,Ctrl);
+% Define controller
+Ctrl = Def_Ctrl(DAB3,Mod);
 
-% Decide constant voltage value side & Plot OP-Point and OP-Range
-fix_flag = 'input side';
-[Vi,Vo]= Def_Plot_OP_Range(DAB3,fix_flag,Ctrl);
+% Define operation range
+OP = Def_Plot_OP_Range(DAB3,Ctrl);
 

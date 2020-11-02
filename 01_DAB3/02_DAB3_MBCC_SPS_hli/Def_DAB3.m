@@ -9,6 +9,7 @@
 %
 % Establishment: 13,05,2020 Huixue Liu, PGS, RWTH Aachen
 % Last Change:   17,09,2020 Huixue Liu, PGS, RWTH Aachen
+
 % ########################################################################
 
 %% Parameters definition
@@ -17,12 +18,12 @@ function DAB3 = Def_DAB3()
 % DC link intput side
 DAB3.Rc_in = 1e-3;                            % [Ohm] parasite resistor of DC link input capacitor
 DAB3.C_in = 1e-3;                             % [F] DC link input capacitor
-DAB3.Vn_in = 1000;                            % [V] initial voltage of input capacitor that from Def_Plot_OP_Range
+DAB3.Vn_in = 1000;                            % [V] initial voltage of input capacitor that from OP.Vn_in in Def_SetOP
 
 % DC link output side
-DAB3.C_out = 1e-3;                            % [F] DC link output capacitor
 DAB3.Rc_out = 1e-3;                           % [Ohm] parasite resistor of DC link output capacitor
-DAB3.Vn_out = 1000;                           % [V] initial voltage of output capacitor that from Def_Plot_OP_Range
+DAB3.C_out = 1e-3;                            % [F] DC link output capacitor
+DAB3.Vn_out = 1000;                           % [V] initial voltage of output capacitor that from OP.Vn_out in Def_SetOP
                        
 % Transformer parameters
 DAB3.Ntr = 1;                                 % turns ratio in transformer Ntr:1
