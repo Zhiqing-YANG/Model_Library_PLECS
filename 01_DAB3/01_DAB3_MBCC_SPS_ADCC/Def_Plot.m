@@ -4,6 +4,10 @@
 % To decide the constant voltage value side and show the operating point and 
 %  the operating range of DAB3
 %
+% operation flag selections:
+%         1: SPS
+%         2: ADCC
+%         3: IADCC
 % Input:
 %       - [obj] Parameters of OP
 %       - [obj] Parameters of DAB3
@@ -11,11 +15,11 @@
 % Output:
 %       - [] plot the operating point and the operating range of DAB3
 %
-%
 % Establishment: 15.09.2020 Huixue Liu, PGS, RWTH Aachen
 % Last change:   25.10.2020 Huixue Liu, PGS, RWTH Aachen
     
 % ########################################################################
+
 
 %% 
 function [] = Def_Plot(OP,DAB3,Ctrl)
@@ -37,7 +41,7 @@ switch fix_flag
     case 'output side'
         Vi_range = V_var_aux*OP.Vn_in;        % [V] input voltage operation range
         Vo_range = OP.Vn_out;                 % [V] output voltage operation range
-        plot_range = Vi_range/OP.Vn_in;       % plot range 
+        plot_range = Vi_range/OP.Vn_in;          % plot range 
         k = find(plot_range == 1);
         k = k(1);
         part_1 = k:length(plot_range);
@@ -50,12 +54,25 @@ plot_param.part{1} = part_1;
 plot_param.part{2} = part_2;
 
 % generate feedforward calculation parameter set
-ff_cal_param.op = [OP.Vi,OP.Vo,DAB3.Ntr,Ctrl.f,DAB3.L,OP.P_op,OP.r_op,OP.Pn,Ctrl.td_in,Ctrl.td_out,Ctrl.td_flag];
+ff_cal_param.op = [OP.Vi,OP.Vo,DAB3.Ntr,Ctrl.f,DAB3.L,OP.P_op,OP.r_op,OP.Pn,Ctrl.td_in,Ctrl.td_out,Ctrl.td_mode,Ctrl.td_flag,Ctrl.zcs_rel];
 ff_cal_param.range{1} = Vi_range;
 ff_cal_param.range{2} = Vo_range;
 
 %% region decision and control parameters calculation
-[d1,d2,dp,mode] = DAB3_ff_SPS_cal(ff_cal_param,plot_param);
+switch Ctrl.OP_flag
+    
+    case 1
+        [d1,d2,dp,mode] = DAB3_ff_SPS_cal(ff_cal_param,plot_param);
+        
+    case 2
+        [d1,d2,dp,mode] = DAB3_ff_ADCC_cal(ff_cal_param,plot_param);
+        
+    case 3
+        [d1,d2,dp,mode] = DAB3_ff_IADCC_cal(ff_cal_param,plot_param);
+   
+    otherwise
+        error('wrong operation mode');
+end
 
 %% Print results
 fprintf('The constant voltage value side is: %s\n',fix_flag)

@@ -19,7 +19,8 @@ r_op = ff_cal_param.op(7);
 Pn = ff_cal_param.op(8);
 td_in = ff_cal_param.op(9);
 td_out = ff_cal_param.op(10);
-td_flag = ff_cal_param.op(11);
+td_mode = ff_cal_param.op(11);
+td_flag = ff_cal_param.op(12);
 
 Pref = Pn*P_op;
 w = 2*pi*f;
@@ -62,14 +63,32 @@ if (Pref >= 0)
         % dead time compensation
         if (td_flag == 1)
             if (Pref <= P_SPS_1_input_boundary_op)
-                % compensation if input hard-switching      
-                    dp = dp+td_in*f;  
+                % compensation if input hard-switching
+                if (td_mode == 1)
+                    dp = dp+td_in*f;
+                elseif (td_mode == 2)
+                    dp = dp+td_out*f;
+                else
+                    dp = dp+(td_in+td_out)*f/2;
+                end
            elseif (Pref <= P_SPS_1_output_boundary_op)
                 % compensation if output hard-switching
-                    dp = dp-td_out*f;   
+                if (td_mode == 1)
+                    dp = dp-td_out*f;
+                elseif (td_mode == 2)
+                    dp = dp-td_in*f;
+                else
+                    dp = dp-(td_in+td_out)*f/2;
+                end
             else   
                 % compensation if soft-switching
+                if (td_mode == 1)
                     dp = dp+0*f;
+                elseif (td_mode == 2)
+                    dp = dp-(td_in-td_out)*f;
+                else
+                    dp = dp-(td_in-td_out)*f/2;
+                end
             end
         end
     else
@@ -80,7 +99,13 @@ if (Pref >= 0)
         % deadtime compensation
         if (td_flag == 1)
             % compensation if soft-switching
+            if (td_mode == 1)
                 dp = dp+0*f;
+            elseif (td_mode == 2)
+                dp = dp-(td_in-td_out)*f;
+            else
+                dp = dp-(td_in-td_out)*f/2;
+            end
         end
     end
 else
@@ -93,13 +118,31 @@ else
         if (td_flag == 1)
             if (Pref >= P_SPS_neg_1_output_boundary_op)
                 % compensation if input hard-switching
+                if (td_mode == 1)
                     dp = dp-td_out*f;
+                elseif (td_mode == 2)
+                    dp = dp-td_in*f;
+                else
+                    dp = dp-(td_in+td_out)*f/2;
+                end
             elseif (Pref >= P_SPS_neg_1_input_boundary_op)
                 % compensation if output hard-switching
+                if (td_mode == 1)
                     dp = dp+td_in*f;
+                elseif (td_mode == 2)
+                    dp = dp+td_out*f;
+                else
+                    dp = dp+(td_in+td_out)*f/2;
+                end
             else
                 % compensation if soft-switching
+                if (td_mode == 1)
                     dp = dp+0;
+                elseif (td_mode == 2)
+                    dp = dp-(td_in-td_out)*f;
+                else
+                    dp = dp-(td_in-td_out)*f/2;
+                end
             end
         end    
     else
@@ -110,7 +153,13 @@ else
         % deadtime compensation
         if (td_flag == 1)
             % compensation if soft-switching
+            if (td_mode == 1)
                 dp = dp+0;
+            elseif (td_mode == 2)
+                dp = dp-(td_in-td_out)*f;
+            else
+                dp = dp-(td_in-td_out)*f/2;
+            end
         end
     end
 end
@@ -142,7 +191,7 @@ end
 xlabel('Voltage Variation in p.u.');
 ylabel('Transferred Power P in p.u.');
 legend({'Pmax SPS 1','SPS ZVS Input Boundary','SPS ZVS Output Boundary'},'Location','northwest');
-grid on
+grid on 
 box on
 title('Operation Map');
 
