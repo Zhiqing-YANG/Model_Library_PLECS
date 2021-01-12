@@ -10,7 +10,6 @@
 %
 % Establishment: 11.05.2020 Huixue Liu, PGS, RWTH Aachen
 % Last change:   25.10.2020 Huixue Liu, PGS, RWTH Aachen  
-
 % ########################################################################
 
 %% Parameters Definition

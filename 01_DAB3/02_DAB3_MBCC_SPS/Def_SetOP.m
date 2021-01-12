@@ -29,7 +29,7 @@ OP.P_op = 1;                               % [p.u.] operation power refer to Pn
 OP.Pref = OP.P_op*OP.Pn;                   % [W] referred transferred power
 
 % set the voltage value at the fixed voltage value side 
-OP.V_fix = 1000;                           % [V] voltage at fixed side
+OP.V_fix = 5000;                           % [V] voltage at fixed side
 OP.r_op = 1.0;                             % [ ] voltage ratio w.r.t. Vn_in or Vn_out
 OP.fix_flag = fix_flag;                    % [ ] set the constant voltage value side
 

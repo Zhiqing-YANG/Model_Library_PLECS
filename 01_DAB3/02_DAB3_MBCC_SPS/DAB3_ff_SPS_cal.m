@@ -141,10 +141,12 @@ else
 end
 xlabel('Voltage Variation in p.u.');
 ylabel('Transferred Power P in p.u.');
-legend({'Pmax SPS 1','SPS ZVS Input Boundary','SPS ZVS Output Boundary'},'Location','northwest');
+xlim([0.5,1.5]);
+legend({'Pmax SPS Mode a','SPS ZVS Input Boundary','SPS ZVS Output Boundary'},'Location','northwest');
 grid on
 box on
 title('Operation Map');
+set(gca,'FontSize',14,'Fontname','Times New Roman');
 
 % mark operation Point
 plot(r_op, Pref/Pn, 'or','Markersize',7.5,'MarkerFaceColor','r','DisplayName','Operating Point');
