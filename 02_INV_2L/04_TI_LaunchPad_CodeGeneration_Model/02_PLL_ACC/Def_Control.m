@@ -57,7 +57,7 @@ Ctrl.IPSfilter.num = [w^2];
 Ctrl.IPSfilter.den = [1 2*zeta*w w^2];
 
 %% Protection
-Ctrl.th_vc = 120;
-Ctrl.th_iL = 8;
+Ctrl.th_vc = 150;
+Ctrl.th_iL = 20;
 
 end
