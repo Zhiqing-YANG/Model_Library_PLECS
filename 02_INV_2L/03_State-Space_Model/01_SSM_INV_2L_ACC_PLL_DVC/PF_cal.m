@@ -1,22 +1,29 @@
 %% Participation factors
 % ########################################################################
-% to calculate participation factors
-
-% Establishment: 08.04.2019 Christian Bendfeld, PGS, RWTH Aachen
+% Calculate resonant frequency and damping ratio of all eigenvalues
+% Input:
+%       - [obj] state-space model
+% Output:
+%       - [matrix] participation factor matrix 
+% Establishment:    25.07.2021 Zhiqing Yang, PGS, RWTH Aachen
 % ########################################################################
 
-function [PF, V_L] = PF_cal(A)
-
+function PF = PF_cal(SSM)
+%% Data pre-processing
 format short
-[V_R, EV, V_L] = eig(A);        % V_R: the right eigenvector element 
-                                % V_L: the left eigenvector element
-P = V_R.*V_L;
+[V_R, ~] = eig(SSM.A);        % V_R: the right eigenvector element                       
+V_t = inv(V_R);          
+V_L = transpose(V_t);       % V_L: the left eigenvector element  
+
+%% Participation factor calculation
+P = V_R.*V_L; 
 [m,n] = size(P); 
 PF = zeros(m); 
 for i = 1:n
     PF(:,i)=abs(P(:,i))/max(abs(P(:,i)));
 end
 
+%% Print results
 disp('Participation factors')
 disp(PF)
 
