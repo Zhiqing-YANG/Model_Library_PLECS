@@ -4,11 +4,9 @@
 % Output:
 %       - [obj] grid parameter 
 % Establishment: 23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
 % ########################################################################
 
 function Grid = Def_Grid()
-
 % grid
 Grid.fg = 50;                           % [Hz] grid frequency
 Grid.wg = 2*pi*Grid.fg;                 % [rad/s] grid angle frequency

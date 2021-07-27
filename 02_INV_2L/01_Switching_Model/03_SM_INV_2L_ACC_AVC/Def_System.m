@@ -2,10 +2,9 @@
 % ########################################################################
 % Define a system
 % Establishment: 23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
-clear all
+clear
 
 %% Simulation 
 simtime = 1;                            % [s] simulation time
@@ -13,7 +12,7 @@ simtime = 1;                            % [s] simulation time
 %% Grid
 Grid = Def_Grid();   
 % change of grid parameters
-Grid.Lg_add = 25e-6;                    % [H] incremental grid inductance 
+% Grid.Lg_add = 25e-6;                    % [H] incremental grid inductance 
 
 %% Inverter
 Inv = Def_Inverter();

@@ -2,7 +2,6 @@
 % ########################################################################
 % Define a system
 % Establishment: 23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
 % ########################################################################
 
 % simulation 

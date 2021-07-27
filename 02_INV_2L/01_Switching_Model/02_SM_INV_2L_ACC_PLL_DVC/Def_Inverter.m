@@ -1,10 +1,9 @@
 %% Inverter Definition
 % ########################################################################
-% Define object of a central inverter
+% Define the object of an inverter
 % Output:
 %       - [obj] inverter parameter 
 % Establishment: 23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function Inv = Def_Inverter()

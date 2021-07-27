@@ -2,12 +2,12 @@
 % ########################################################################
 % Design controls for grid-tied inverter
 % Establishment: 25.11.2020 Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   25.11.2020 Zhiqing Yang, PGS, RWTH Aachen
 % ########################################################################
 
-% define system
+%% Define system
 eval('Def_System')
 
+%% Design controller
 % specify desired control performance
 Req.ACC.BW = 300;           % [Hz] ACC bandwidth
 Req.ACC.PM = 60;            % [deg] ACC phase margin
