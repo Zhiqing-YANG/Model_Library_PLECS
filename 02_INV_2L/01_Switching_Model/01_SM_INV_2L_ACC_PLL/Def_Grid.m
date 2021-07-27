@@ -18,4 +18,5 @@ Grid.Rg = 0e-3;                         % [Ohm] Grid resistance
 % -- change of Lg
 Grid.Lg_add = 0;                        % [H] incremental grid inductance 
 Grid.Lg_add_time = 0.5;                 % [s] simulation time when Lg changes 
+
 end

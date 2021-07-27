@@ -7,7 +7,6 @@
 % Output:
 %       - [obj] control parameter 
 % Establishment: 23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function Ctrl = Def_Control(Grid,Inv)
@@ -38,6 +37,25 @@ Ctrl.PLL.SatLim = inf;             % [] Saturation limit of integrator
 Ctrl.DVC.Kp = -3.6;                % [] Kp of DVC  
 Ctrl.DVC.Ki = -239;                % [] Ki of DVC
 Ctrl.DVC.SatLim = inf;             % [] Saturation limit of integrator
+
+%% Stability-Enhanced Control
+% margin balancing control
+% ref:  Margin Balancing Control Design of Three-Phase Grid-Tied PV Inverters for Stability Improvement
+%       https://ieeexplore.ieee.org/abstract/document/9361104
+Ctrl.MBC.Kp = 3.4;                 % [] phase correction factor
+Ctrl.MBC.Theta = Ctrl.MBC.Kp*Ctrl.T_sp*Grid.wg;  % [rad] phase correction angle
+
+% virtual damping control
+% ref:  Virtual Damping Control Design of Three-Phase Grid-Tied PV Inverters for Passivity Enhancement
+%       https://ieeexplore.ieee.org/abstract/document/9247289
+Ctrl.VDC.Gqq.Kp = 2;
+Ctrl.VDC.Gqq.Ki = 2500;
+Ctrl.VDC.Gdd.Kp = 4;
+Ctrl.VDC.Gdd.Ki = 0;
+Ctrl.VDC.Gdq.Kp = 0;
+Ctrl.VDC.Gdq.Ki = 0;
+Ctrl.VDC.Gqd.Kp = 0;
+Ctrl.VDC.Gqd.Ki = 0;
 
 %% Control Reference
 Ctrl.I_ref_d = Inv.OP.V_dc*Inv.OP.I_pv/(1.5*Grid.V_amp);           % [A] d-axis ref current

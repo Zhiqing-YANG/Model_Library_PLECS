@@ -18,7 +18,6 @@
 %   - [obj] designed parameters (ACC,PLL,DVC  Kp & Ki)
 %
 % Establishment: 25.11.2020 Zhiqing Yang, PGS, RWTH Aachen
-
 % ########################################################################
 
 function Design = Design_Ctrl(Inv,Grid,Ctrl,Req,print_opt)

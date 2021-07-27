@@ -1,13 +1,12 @@
 %% Control Definition
 % ########################################################################
-% Define object of a controller according to the grid and the inverter
+% Define the object of an inverter controller
 % Input:
 %       - [obj] grid parameter 
 %       - [obj] inverter parameter 
 % Output:
 %       - [obj] control parameter 
 % Establishment: 23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function Ctrl = Def_Control(Grid,Inv)
@@ -21,7 +20,7 @@ Ctrl.T_sp = 1/Ctrl.f_sp;           % [s] sampling time
 % bandwidth: 300 [Hz]
 Ctrl.ACC.Kp = 0.23;                % [] Kp of ACC
 Ctrl.ACC.Ki = 28;                  % [] Ki of ACC
-Ctrl.ACC.wL = 2*pi*Grid.fg*Inv.Filter.L1; % [] cross-coupling term
+Ctrl.ACC.wL = Grid.wg*Inv.Filter.L1; % [] cross-coupling term
 Ctrl.ACC.K_VFF = 2*pi*3000;        % [] filter bandwidth of VFF 
 Ctrl.ACC.K_AD = 0.05;              % [] active damping factor
 Ctrl.ACC.SatLim = inf;             % [] Saturation limit of integrator
@@ -30,7 +29,7 @@ Ctrl.ACC.SatLim = inf;             % [] Saturation limit of integrator
 % bandwidth: 30 [Hz]
 Ctrl.PLL.Kp = 0.36;                % [] Kp of PLL
 Ctrl.PLL.Ki = 40;                  % [] Ki of PLL
-Ctrl.PLL.w1 = 2*pi*Grid.fg;        % [] ideal grid angular frequency
+Ctrl.PLL.w1 = Grid.wg;             % [] ideal grid angular frequency
 Ctrl.PLL.SatLim = inf;             % [] Saturation limit of integrator
 
 % direct-voltage control 
@@ -48,4 +47,5 @@ Ctrl.SetOP.i_ref_d = [Ctrl.I_ref_d,Ctrl.I_ref_d,Ctrl.I_ref_d,Ctrl.I_ref_d,Ctrl.I
 Ctrl.SetOP.i_ref_q = [Ctrl.I_ref_q,Ctrl.I_ref_q,Ctrl.I_ref_q,Ctrl.I_ref_q,Ctrl.I_ref_q];
 %Ctrl.SetOP.v_ref_dc = [Ctrl.V_ref_dc,Ctrl.V_ref_dc,Ctrl.V_ref_dc+50,Ctrl.V_ref_dc+50,Ctrl.V_ref_dc];   
 Ctrl.SetOP.v_ref_dc = [Ctrl.V_ref_dc,Ctrl.V_ref_dc,Ctrl.V_ref_dc,Ctrl.V_ref_dc,Ctrl.V_ref_dc]; 
+
 end
