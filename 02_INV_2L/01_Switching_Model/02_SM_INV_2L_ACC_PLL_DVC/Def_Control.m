@@ -7,7 +7,6 @@
 % Output:
 %       - [obj] control parameter 
 % Establishment: 23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function Ctrl = Def_Control(Grid,Inv)

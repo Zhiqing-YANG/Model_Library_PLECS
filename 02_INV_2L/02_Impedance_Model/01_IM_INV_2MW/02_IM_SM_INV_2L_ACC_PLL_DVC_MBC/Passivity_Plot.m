@@ -16,19 +16,19 @@ n_sample=1000;
 f_swp = logspace(fi,ff,n_sample);
 
 % change system parameters
-Grid.Lg = 300e-6; 
+Ctrl.ACC.K_VFF = 2*pi*3000;        % [] filter bandwidth of VFF 
 
 % case 1
-Ctrl.MBC.Kp = 0;
-[Z_inv_1,Y_inv_1,Z_pcc_1,Y_pcc_1,Z_g_1,Y_g_1] = IM_INV_2L_ACC_PLL_DVC_MBC(Grid,Inv,Ctrl,f_swp);
+Ctrl.DVC.Kp  = -35;
+[Z_inv_1,Y_inv_1,Z_pcc_1,Y_pcc_1,Z_g_1,Y_g_1] = IM_INV_2L_ACC_PLL_DVC(Grid,Inv,Ctrl,f_swp);
 
 % case 2
-Ctrl.MBC.Kp = 3.4;
-[Z_inv_2,Y_inv_2,Z_pcc_2,Y_pcc_2,Z_g_2,Y_g_2] = IM_INV_2L_ACC_PLL_DVC_MBC(Grid,Inv,Ctrl,f_swp);
+Ctrl.DVC.Kp  = -37;
+[Z_inv_2,Y_inv_2,Z_pcc_2,Y_pcc_2,Z_g_2,Y_g_2] = IM_INV_2L_ACC_PLL_DVC(Grid,Inv,Ctrl,f_swp);
 
 % case 3
-Ctrl.MBC.Kp = 3.4;
-[Z_inv_3,Y_inv_3,Z_pcc_3,Y_pcc_3,Z_g_3,Y_g_3] = IM_INV_2L_ACC_PLL_DVC_MBC(Grid,Inv,Ctrl,f_swp);
+Ctrl.DVC.Kp  = -39;
+[Z_inv_3,Y_inv_3,Z_pcc_3,Y_pcc_3,Z_g_3,Y_g_3] = IM_INV_2L_ACC_PLL_DVC(Grid,Inv,Ctrl,f_swp);
 
 %% Passivity Plot
 % load color template
