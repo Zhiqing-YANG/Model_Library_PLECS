@@ -5,7 +5,7 @@
 %       - [obj] state-space model
 % Output:
 %       - [obj] eigenvalue
-% Establishment:    25.07.2021 Zhiqing Yang, PGS, RWTH Aachen
+% Establishment: 25.07.2021 Zhiqing Yang, PGS, RWTH Aachen
 % ########################################################################
 
 function EV = EV_RES_cal(SSM)
@@ -57,7 +57,6 @@ set(gca, 'XLim', [-3000, get(gca, 'XLim') * [0; 1]])
 set(gca,'FontSize',14,'Fontname', 'Times New Roman');
 ylabel('Imaginary part in rad/s','FontSize',14,'Fontname', 'Times New Roman');
 xlabel('Real part in rad/s','FontSize',14,'Fontname', 'Times New Roman');
-
 
 end
 

@@ -5,7 +5,7 @@
 %       - [obj] state-space model
 % Output:
 %       - [matrix] participation factor matrix 
-% Establishment:    25.07.2021 Zhiqing Yang, PGS, RWTH Aachen
+% Establishment: 10.08.2018 Qilei Wang, PGS, RWTH Aachen
 % ########################################################################
 
 function PF = PF_cal(SSM)

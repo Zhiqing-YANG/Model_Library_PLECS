@@ -7,7 +7,7 @@
 %       - [obj] grid parameter 
 % Output:
 %       - [obj] state-space model
-% Establishment: 24.07.2021 Zhiqing Yang, PGS, RWTH Aachen
+% Establishment: 24.06.2019 Christian Bendfeld PGS, RWTH Aachen
 % ########################################################################
 
 function SSM_INV = SSM_INV_2L_ACC_PLL_DVC(Inv,Ctrl,Grid)
