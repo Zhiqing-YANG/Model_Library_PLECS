@@ -1,0 +1,33 @@
+/*
+   Copyright (c) 2019 by Plexim GmbH
+   All rights reserved.
+
+   A free license is granted to anyone to use this software for any legal
+   non safety-critical purpose, including commercial applications, provided
+   that:
+   1) IT IS NOT USED TO DIRECTLY OR INDIRECTLY COMPETE WITH PLEXIM, and
+   2) THIS COPYRIGHT NOTICE IS PRESERVED in its entirety.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+ */
+ 
+-m ./output_TI2837xS/LaunchPad.map
+--stack_size=0x300
+--warn_sections
+-i "C:/ti/ti-cgt-c2000_20.2.2.LTS/lib" 
+-i "H:/Research/Software_Library/Coder Targets/ti_c2000/TI2837xS/pil"
+-i "H:/Research/Software_Library/Coder Targets/ti_c2000/TI2837xS/shrd"
+-l libc.a
+-l pil_c28.a
+-l shrdlib_c28.a
+--reread_libs
+--rom_model
+"H:/Research/Software_Library/Coder Targets/ti_c2000/TI2837xS/app/F2837xS_Headers_nonBIOS.cmd"
+"H:/Research/Software_Library/Coder Targets/ti_c2000/TI2837xS/app/F2837xS.cmd"
+-o ./output_TI2837xS/LaunchPad.out
