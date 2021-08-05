@@ -52,7 +52,7 @@ G_AD = [Ctrl.ACC.K_AD,0;0,Ctrl.ACC.K_AD];                                       
 G_VFF = [Ctrl.ACC.K_VFF/((1i*w)+Ctrl.ACC.K_VFF),0;0,Ctrl.ACC.K_VFF/((1i*w)+Ctrl.ACC.K_VFF)]; 
 
 % delay and holder
-G_dh = [(2-1.5*Ctrl.T_sp*(1i*w))/(2+1.5*Ctrl.T_sp*(1i*w)),0;0,(2-1.5*Ctrl.T_sp*(1i*w))/(2+1.5*Ctrl.T_sp*(1i*w))];   % pade approximation
+G_dh = [(2-Ctrl.T_dh*(1i*w))/(2+Ctrl.T_dh*(1i*w)),0;0,(2-Ctrl.T_dh*(1i*w))/(2+Ctrl.T_dh*(1i*w))];   % pade approximation
 
 % PLL 
 H_PLL = Ctrl.PLL.Kp+Ctrl.PLL.Ki/(1i*w);                         % PI controller of PLL in dq frame

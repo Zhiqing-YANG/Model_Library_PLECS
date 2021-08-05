@@ -49,7 +49,7 @@ D_ACC = [Ctrl.ACC.Kp,0,-(Ctrl.ACC.Kp+Ctrl.ACC.K_AD),-Grid.wg*Inv.Filter.L1,0,0,C
 
 % delay effect with Padé approximation
 Pade_order = 1;
-T_del = 1.5*Ctrl.T_sp;
+T_del = Ctrl.T_dh;
 [num,den] = pade(T_del,Pade_order); 
 H = tf(num,den); 
 Pade = ss(H);

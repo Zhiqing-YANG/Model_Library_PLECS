@@ -1,8 +1,11 @@
 %% Inverter Definition
 % ########################################################################
 % Define the object of an inverter controller
-% Output:
+% Input:
+%       - [obj] grid parameter 
 %       - [obj] inverter parameter 
+% Output:
+%       - [obj] control parameter 
 % Establishment: 23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
 % ########################################################################
 
@@ -12,6 +15,9 @@ function Ctrl = Def_Control(Grid,Inv)
 Ctrl.f_sw = 20e3;                  % [Hz] inverter switching frequency;    
 Ctrl.f_sp = 2*Ctrl.f_sw;           % [Hz] sampling frequency
 Ctrl.T_sp = 1/Ctrl.f_sp;           % [s] sampling time
+
+% delay and hold
+Ctrl.T_dh = 1.5*Ctrl.T_sp;         % [s] equiv. delay 
 
 % alternating-current control
 Ctrl.ACC.Kp = 40;                  % [] Kp of ACC

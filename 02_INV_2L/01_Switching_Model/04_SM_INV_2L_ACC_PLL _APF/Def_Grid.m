@@ -1,6 +1,6 @@
 %% Grid Definition
 % ########################################################################
-% Define object of a grid
+% Define the object of a grid
 % Output:
 %       - [obj] grid parameter 
 % Establishment: 23.08.2020 Zhiqing Yang, PGS, RWTH Aachen

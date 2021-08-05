@@ -11,7 +11,6 @@
 addpath('System/');
 eval('Def_System');
 
-
 %% Operating Case
 % state-space model
 SSM_INV = SSM_INV_2L_ACC_PLL_DVC(Inv,Ctrl,Grid);

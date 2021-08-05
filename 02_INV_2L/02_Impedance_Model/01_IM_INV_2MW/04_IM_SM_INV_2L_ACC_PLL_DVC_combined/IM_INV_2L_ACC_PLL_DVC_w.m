@@ -57,7 +57,7 @@ G_PC = [cos(theta_pc),-sin(theta_pc);sin(theta_pc),cos(theta_pc)];              
 G_ACC = G_PC*G_ACC;
 
 % delay and holder
-G_dh = [(2-1.5*Ctrl.T_sp*(1i*w))/(2+1.5*Ctrl.T_sp*(1i*w)),0;0,(2-1.5*Ctrl.T_sp*(1i*w))/(2+1.5*Ctrl.T_sp*(1i*w))];   % pade approximation
+G_dh = [(2-Ctrl.T_dh*(1i*w))/(2+Ctrl.T_dh*(1i*w)),0;0,(2-Ctrl.T_dh*(1i*w))/(2+Ctrl.T_dh*(1i*w))];   % pade approximation
 
 % PLL 
 H_PLL = Ctrl.PLL.Kp+Ctrl.PLL.Ki/(1i*w);                         % PI controller of PLL in dq frame

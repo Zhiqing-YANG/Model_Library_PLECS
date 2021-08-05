@@ -53,7 +53,7 @@ G_ACCPR = [Ctrl.ACC.Kp+0.5*Ctrl.ACC.Kr/(1i*w)+0.5*Ctrl.ACC.Kr*(1i*w)/((1i*w)^2+4
 G_AD = [Ctrl.ACC.K_AD,0;0,Ctrl.ACC.K_AD];                                       % active damping
 
 % delay and holder
-G_dh = [(2-1.5*Ctrl.T_sp*(1i*w))/(2+1.5*Ctrl.T_sp*(1i*w)),0;0,(2-1.5*Ctrl.T_sp*(1i*w))/(2+1.5*Ctrl.T_sp*(1i*w))];   % pade approximation
+G_dh = [(2-Ctrl.T_dh*(1i*w))/(2+Ctrl.T_dh*(1i*w)),0;0,(2-Ctrl.T_dh*(1i*w))/(2+Ctrl.T_dh*(1i*w))];   % pade approximation
 
 % PLL 
 H_PLL = Ctrl.PLL.Kp+Ctrl.PLL.Ki/(1i*w);                         % PI controller of PLL in dq frame

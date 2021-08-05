@@ -1,10 +1,9 @@
 %% Inverter Definition
 % ########################################################################
-% Define object of a central inverter
+% Define the object of an inverter
 % Output:
 %       - [obj] inverter parameter 
 % Establishment: 23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function Inv = Def_Inverter()
@@ -24,4 +23,5 @@ Inv.Filter.R2 = 1e-3;             % [Ohm] parasite resistance in L2
 %% Operating Point
 Inv.OP.V_dc = 1200;               % [V] operating condition dc-link voltage
 Inv.OP.I_pv = 1500;               % [A] operating condition pv current
+
 end

@@ -1,6 +1,6 @@
 %% Control Definition
 % ########################################################################
-% Define object of a controller according to the grid and the inverter
+% Define the object of an inverter controller
 % Input:
 %       - [obj] grid parameter 
 %       - [obj] inverter parameter 
@@ -16,6 +16,9 @@ function Ctrl = Def_Control(Grid,Inv)
 Ctrl.f_sw = 3e3;                   % [Hz] inverter switching frequency;    
 Ctrl.f_sp = 2*Ctrl.f_sw;           % [Hz] sampling frequency
 Ctrl.T_sp = 1/Ctrl.f_sp;           % [s] sampling time
+
+% delay and hold
+Ctrl.T_dh = 1.5*Ctrl.T_sp;         % [s] equiv. delay 
 
 % alternating-current control
 % bandwidth: 300 [Hz]
@@ -46,4 +49,5 @@ Ctrl.SetOP.i_ref_d = [Ctrl.I_ref_d,Ctrl.I_ref_d,Ctrl.I_ref_d,Ctrl.I_ref_d,Ctrl.I
 Ctrl.SetOP.i_ref_q = [Ctrl.I_ref_q,Ctrl.I_ref_q,Ctrl.I_ref_q,Ctrl.I_ref_q,Ctrl.I_ref_q];
 %Ctrl.SetOP.v_ref_dc = [Ctrl.V_ref_dc,Ctrl.V_ref_dc,Ctrl.V_ref_dc+50,Ctrl.V_ref_dc+50,Ctrl.V_ref_dc];   
 Ctrl.SetOP.v_ref_dc = [Ctrl.V_ref_dc,Ctrl.V_ref_dc,Ctrl.V_ref_dc,Ctrl.V_ref_dc,Ctrl.V_ref_dc]; 
+
 end

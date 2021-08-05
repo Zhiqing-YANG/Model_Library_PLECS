@@ -2,10 +2,9 @@
 % ########################################################################
 % Define a system
 % Establishment: 23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
-clear all
+clear
 
 %% Simulation 
 simtime = 1;                            % [s] simulation time
@@ -25,5 +24,5 @@ Inv.OP.I_pv = 1000;                     % [A] operating condition pv current
 %% Control
 Ctrl = Def_Control(Grid,Inv);
 % change of inverter parameters                
-% Ctrl.MBC.Theta = 0;                 % [rad] phase correction angle
+Ctrl.MBC.Theta = 0;                     % [rad] phase correction angle
 Ctrl.ACC.K_VFF = 2*pi*3000;

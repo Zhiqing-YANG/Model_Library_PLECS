@@ -1,13 +1,12 @@
 %% Control Definition
 % ########################################################################
-% Define object of a controller according to the grid and the inverter
+% Define the object of an inverter controller
 % Input:
 %       - [obj] grid parameter 
 %       - [obj] inverter parameter 
 % Output:
 %       - [obj] control parameter 
 % Establishment: 23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function Ctrl = Def_Control(Grid,Inv)
@@ -17,6 +16,9 @@ Ctrl.f_sw = 3e3;                   % [Hz] inverter switching frequency;
 Ctrl.f_sp = 2*Ctrl.f_sw;           % [Hz] sampling frequency
 Ctrl.T_sp = 1/Ctrl.f_sp;           % [s] sampling time
 
+% delay and hold
+Ctrl.T_dh = 1.5*Ctrl.T_sp;         % [s] equiv. delay 
+
 % alternating-current control
 % bandwidth: 300 [Hz]
 Ctrl.ACC.Kp = 0.23;                % [] Kp of ACC
@@ -25,10 +27,6 @@ Ctrl.ACC.wL = 2*pi*Grid.fg*Inv.Filter.L1; % [] cross-coupling term
 Ctrl.ACC.K_VFF = 2*pi*30000;       % [] filter bandwidth of VFF 
 Ctrl.ACC.K_AD = 0.05;              % [] active damping factor
 Ctrl.ACC.SatLim = inf;             % [] Saturation limit of integrator
-
-% margin balancing control
-Ctrl.MBC.Kp = 3.4;                 % [] phase correction factor
-Ctrl.MBC.Theta = Ctrl.MBC.Kp*Ctrl.T_sp*Grid.wg;                 % [rad] phase correction angle
 
 % phase-locked loop
 % bandwidth: 30 [Hz]
@@ -43,7 +41,15 @@ Ctrl.DVC.Kp = -3.6;                % [] Kp of DVC
 Ctrl.DVC.Ki = -239;                % [] Ki of DVC
 Ctrl.DVC.SatLim = inf;             % [] Saturation limit of integrator
 
+% margin balancing control
+% ref:  Margin Balancing Control Design of Three-Phase Grid-Tied PV Inverters for Stability Improvement
+%       https://ieeexplore.ieee.org/abstract/document/9361104
+Ctrl.MBC.Kp = 3.4;                 % [] phase correction factor
+Ctrl.MBC.Theta = Ctrl.MBC.Kp*Ctrl.T_sp*Grid.wg;                 % [rad] phase correction angle
+
 % virtual damping control
+% ref:  Virtual Damping Control Design of Three-Phase Grid-Tied PV Inverters for Passivity Enhancement
+%       https://ieeexplore.ieee.org/abstract/document/9247289
 Ctrl.VDC.Gqq.Kp = 2;
 Ctrl.VDC.Gqq.Ki = 2500;
 Ctrl.VDC.Gdd.Kp = 4;
@@ -62,4 +68,5 @@ Ctrl.SetOP.i_ref_d = [Ctrl.I_ref_d,Ctrl.I_ref_d,Ctrl.I_ref_d,Ctrl.I_ref_d,Ctrl.I
 Ctrl.SetOP.i_ref_q = [Ctrl.I_ref_q,Ctrl.I_ref_q,Ctrl.I_ref_q,Ctrl.I_ref_q,Ctrl.I_ref_q];
 %Ctrl.SetOP.v_ref_dc = [Ctrl.V_ref_dc,Ctrl.V_ref_dc,Ctrl.V_ref_dc+50,Ctrl.V_ref_dc+50,Ctrl.V_ref_dc];   
 Ctrl.SetOP.v_ref_dc = [Ctrl.V_ref_dc,Ctrl.V_ref_dc,Ctrl.V_ref_dc,Ctrl.V_ref_dc,Ctrl.V_ref_dc]; 
+
 end
