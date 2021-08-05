@@ -1,10 +1,9 @@
 %% Grid Definition
 % ########################################################################
-% Define object of a grid
+% Define the object of a grid
 % Output:
 %       - [obj] grid parameter 
 % Establishment: 23.08.2020 Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function Grid = Def_Grid()
@@ -19,4 +18,5 @@ Grid.Rg = 0.2;                          % [Ohm] Grid resistance
 % -- change of Lg
 Grid.Lg_add = 0;                        % [H] incremental grid inductance 
 Grid.Lg_add_time = 0.5;                 % [s] simulation time when Lg changes 
+
 end

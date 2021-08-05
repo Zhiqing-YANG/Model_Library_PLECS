@@ -17,7 +17,7 @@ Ctrl.f_sp = 2*Ctrl.f_sw;            % [Hz] sampling frequency
 Ctrl.T_sp = 1/Ctrl.f_sp;            % [s] sampling time
 
 % delay and hold
-Ctrl.T_dh = 1.5*Ctrl.T_sp;
+Ctrl.T_dh = 1.5*Ctrl.T_sp;         % [s] equiv. delay 
 
 % alternating-current control
 % bandwidth: 1000 [Hz]
