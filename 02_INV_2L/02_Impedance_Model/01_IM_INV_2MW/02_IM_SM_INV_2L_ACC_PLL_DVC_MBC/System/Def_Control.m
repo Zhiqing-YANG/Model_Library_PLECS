@@ -32,7 +32,7 @@ Ctrl.ACC.SatLim = inf;             % [] Saturation limit of integrator
 % bandwidth: 30 [Hz]
 Ctrl.PLL.Kp = 0.36;                % [] Kp of PLL
 Ctrl.PLL.Ki = 40;                  % [] Ki of PLL
-Ctrl.PLL.w1 = 2*pi*Grid.fg;        % [] ideal grid angular frequency
+Ctrl.PLL.w1 = Grid.wg;             % [] ideal grid angular frequency
 Ctrl.PLL.SatLim = inf;             % [] Saturation limit of integrator
 
 % direct-voltage control 

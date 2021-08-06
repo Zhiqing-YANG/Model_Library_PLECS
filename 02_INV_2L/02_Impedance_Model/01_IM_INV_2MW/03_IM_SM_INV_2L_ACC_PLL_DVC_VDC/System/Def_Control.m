@@ -44,10 +44,10 @@ Ctrl.DVC.SatLim = inf;             % [] Saturation limit of integrator
 % virtual damping control
 % ref:  Virtual Damping Control Design of Three-Phase Grid-Tied PV Inverters for Passivity Enhancement
 %       https://ieeexplore.ieee.org/abstract/document/9247289
-Ctrl.VDC.Gqq.Kp = 2;
-Ctrl.VDC.Gqq.Ki = 2500;
 Ctrl.VDC.Gdd.Kp = 4;
 Ctrl.VDC.Gdd.Ki = 0;
+Ctrl.VDC.Gqq.Kp = 2;
+Ctrl.VDC.Gqq.Ki = 2500;
 Ctrl.VDC.Gdq.Kp = 0;
 Ctrl.VDC.Gdq.Ki = 0;
 Ctrl.VDC.Gqd.Kp = 0;

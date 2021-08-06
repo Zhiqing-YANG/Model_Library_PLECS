@@ -28,18 +28,18 @@ Color.petrol.p25 = [191,208,209]/255;
 Color.petrol.p10 = [230,236,236]/255;
 
 %% Turquoise
-Color.turquoise100 = [0,152,161]/255;
-Color.turquoise75 = [0,177,183]/255;
-Color.turquoise50 = [137,204,207]/255;
-Color.turquoise25 = [137,204,207]/255;
-Color.turquoise10 = [235,231,231]/255;
+Color.turquoise.p100 = [0,152,161]/255;
+Color.turquoise.p75 = [0,177,183]/255;
+Color.turquoise.p50 = [137,204,207]/255;
+Color.turquoise.p25 = [137,204,207]/255;
+Color.turquoise.p10 = [235,231,231]/255;
 
 %% Green
-Color.greeb100 = [87,171,39]/255;
-Color.greeb75 = [141,192,96]/255;
-Color.greeb50 = [184,241,152]/255;
-Color.greeb25 = [221,235,206]/255;
-Color.greeb10 = [242,247,236]/255;
+Color.green.p100 = [87,171,39]/255;
+Color.green.p75 = [141,192,96]/255;
+Color.green.p50 = [184,241,152]/255;
+Color.green.p25 = [221,235,206]/255;
+Color.green.p10 = [242,247,236]/255;
 
 %% Orange
 Color.orange.p100 = [246,168,0]/255;
