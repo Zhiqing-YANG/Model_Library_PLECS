@@ -53,13 +53,13 @@ h_0 = plot(f_swp,20*log10(abs(Z_g_1.dd)),'-','MarkerSize',5);
 set(h_0,'linewidth',1.5,'Color',Color.black.p75);
 % case 1
 h_1 = plot(f_swp,20*log10(abs(Z_pcc_1.dd)),'-','MarkerSize',5);
-set(h_1,'linewidth',1.5,'Color',Color.blue.p50);
+set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % case 2
 h_2 = plot(f_swp,20*log10(abs(Z_pcc_2.dd)),'-','MarkerSize',5);
-set(h_2,'linewidth',1.5,'Color',Color.blue.p75);
+set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % case 3
 h_3 = plot(f_swp,20*log10(abs(Z_pcc_3.dd)),'-','MarkerSize',5);
-set(h_3,'linewidth',1.5,'Color',Color.blue.p100);
+set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 
 % ylim([-80,20]);
 % xlabel('Frequency (Hz)');
@@ -78,13 +78,13 @@ h_0 = plot(f_swp,wrapTo180(angle(Z_g_1.dd)/pi*180),'-','MarkerSize',5);
 set(h_0,'linewidth',1.5,'Color',Color.black.p75);
 % case 1
 h_1 = plot(f_swp,wrapTo180(angle(Z_pcc_1.dd)/pi*180),'-','MarkerSize',5);
-set(h_1,'linewidth',1.5,'Color',Color.blue.p50);
+set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % case 2
 h_2 = plot(f_swp,wrapTo180(angle(Z_pcc_2.dd)/pi*180),'-','MarkerSize',5);
-set(h_2,'linewidth',1.5,'Color',Color.blue.p75);
+set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % case 3
 h_3 = plot(f_swp,wrapTo180(angle(Z_pcc_3.dd)/pi*180),'-','MarkerSize',5);
-set(h_3,'linewidth',1.5,'Color',Color.blue.p100);
+set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 
 % ylim([-180,180]);
 xlabel('Frequency in Hz');
@@ -109,13 +109,13 @@ h_0 = plot(f_swp,20*log10(abs(Z_g_1.qq)),'-','MarkerSize',5);
 set(h_0,'linewidth',1.5,'Color',Color.black.p75);
 % case 1
 h_1 = plot(f_swp,20*log10(abs(Z_pcc_1.qq)),'-','MarkerSize',5);
-set(h_1,'linewidth',1.5,'Color',Color.blue.p50);
+set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % case 2
 h_2 = plot(f_swp,20*log10(abs(Z_pcc_2.qq)),'-','MarkerSize',5);
-set(h_2,'linewidth',1.5,'Color',Color.blue.p75);
+set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % case 3
 h_3 = plot(f_swp,20*log10(abs(Z_pcc_3.qq)),'-','MarkerSize',5);
-set(h_3,'linewidth',1.5,'Color',Color.blue.p100);
+set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 
 % ylim([-80,20]);
 % xlabel('Frequency (Hz)');
@@ -134,13 +134,13 @@ h_0 = plot(f_swp,wrapTo180(angle(Z_g_1.qq)/pi*180),'-','MarkerSize',5);
 set(h_0,'linewidth',1.5,'Color',Color.black.p75);
 % case 1
 h_1 = plot(f_swp,wrapTo180(angle(Z_pcc_1.qq)/pi*180),'-','MarkerSize',5);
-set(h_1,'linewidth',1.5,'Color',Color.blue.p50);
+set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % case 2
 h_2 = plot(f_swp,wrapTo180(angle(Z_pcc_2.qq)/pi*180),'-','MarkerSize',5);
-set(h_2,'linewidth',1.5,'Color',Color.blue.p75);
+set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % case 3
 h_3 = plot(f_swp,wrapTo180(angle(Z_pcc_3.qq)/pi*180),'-','MarkerSize',5);
-set(h_3,'linewidth',1.5,'Color',Color.blue.p100);
+set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 
 % ylim([-180,180]);
 xlabel('Frequency in Hz');
@@ -165,13 +165,13 @@ set(findall(gcf,'-property','Fontname'),'Fontname','Times New Roman')
 % set(h_0,'linewidth',1.5,'Color',Color.black.p75);
 % % case 1
 % h_1 = plot(f_swp,20*log10(abs(Z_pcc_1.dq)),'-','MarkerSize',5);
-% set(h_1,'linewidth',1.5,'Color',Color.blue.p50);
+% set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % % case 2
 % h_2 = plot(f_swp,20*log10(abs(Z_pcc_2.dq)),'-','MarkerSize',5);
-% set(h_2,'linewidth',1.5,'Color',Color.blue.p75);
+% set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % % case 3
 % h_3 = plot(f_swp,20*log10(abs(Z_pcc_3.dq)),'-','MarkerSize',5);
-% set(h_3,'linewidth',1.5,'Color',Color.blue.p100);
+% set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 % 
 % % xlabel('Frequency (Hz)');
 % ylabel('Magnitude in dB')
@@ -190,13 +190,13 @@ set(findall(gcf,'-property','Fontname'),'Fontname','Times New Roman')
 % set(h_0,'linewidth',1.5,'Color',Color.black.p75);
 % % case 1
 % h_1 = plot(f_swp,wrapTo180(angle(Z_pcc_1.dq)/pi*180),'-','MarkerSize',5);
-% set(h_1,'linewidth',1.5,'Color',Color.blue.p50);
+% set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % % case 2
 % h_2 = plot(f_swp,wrapTo180(angle(Z_pcc_2.dq)/pi*180),'-','MarkerSize',5);
-% set(h_2,'linewidth',1.5,'Color',Color.blue.p75);
+% set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % % case 3
 % h_3 = plot(f_swp,wrapTo180(angle(Z_pcc_3.dq)/pi*180),'-','MarkerSize',5);
-% set(h_3,'linewidth',1.5,'Color',Color.blue.p100);
+% set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 % 
 % xlabel('Frequency in Hz');
 % ylabel('Phase in deg')
@@ -221,13 +221,13 @@ set(findall(gcf,'-property','Fontname'),'Fontname','Times New Roman')
 % set(h_0,'linewidth',1.5,'Color',Color.black.p75);
 % % case 1
 % h_1 = plot(f_swp,20*log10(abs(Z_pcc_1.qd)),'-','MarkerSize',5);
-% set(h_1,'linewidth',1.5,'Color',Color.blue.p50);
+% set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % % case 2
 % h_2 = plot(f_swp,20*log10(abs(Z_pcc_2.qd)),'-','MarkerSize',5);
-% set(h_2,'linewidth',1.5,'Color',Color.blue.p75);
+% set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % % case 3
 % h_3 = plot(f_swp,20*log10(abs(Z_pcc_3.qd)),'-','MarkerSize',5);
-% set(h_3,'linewidth',1.5,'Color',Color.blue.p100);
+% set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 % 
 % % xlabel('Frequency (Hz)');
 % ylabel('Magnitude in dB')
@@ -246,13 +246,13 @@ set(findall(gcf,'-property','Fontname'),'Fontname','Times New Roman')
 % set(h_0,'linewidth',1.5,'Color',Color.black.p75);
 % % case 1
 % h_1 = plot(f_swp,wrapTo180(angle(Z_pcc_1.qd)/pi*180),'-','MarkerSize',5);
-% set(h_1,'linewidth',1.5,'Color',Color.blue.p50);
+% set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % % case 2
 % h_2 = plot(f_swp,wrapTo180(angle(Z_pcc_2.qd)/pi*180),'-','MarkerSize',5);
-% set(h_2,'linewidth',1.5,'Color',Color.blue.p75);
+% set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % % case 3
 % h_3 = plot(f_swp,wrapTo180(angle(Z_pcc_3.qd)/pi*180),'-','MarkerSize',5);
-% set(h_3,'linewidth',1.5,'Color',Color.blue.p100);
+% set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 % 
 % xlabel('Frequency in Hz');
 % ylabel('Phase in deg')

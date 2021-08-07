@@ -48,13 +48,13 @@ subplot(2,2,1)
 hold on 
 % case 1
 h_1 = plot(f_swp,real(Y_inv_1.dd),'-','MarkerSize',5);  
-set(h_1,'linewidth',1.5,'Color',Color.blue.p75);
+set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % case 2
 h_2 = plot(f_swp,real(Y_inv_2.dd),'-','MarkerSize',5);  
-set(h_2,'linewidth',1.5,'Color',Color.red.p75);
+set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % case 3
 h_3 = plot(f_swp,real(Y_inv_3.dd),'-','MarkerSize',5);  
-set(h_3,'linewidth',1.5,'Color',Color.green.p75);
+set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 
 ylim([-10,10]);
 ylabel('Re\{Y_{inv}^{dd}(j\omega)\} in S')
@@ -71,13 +71,13 @@ subplot(2,2,2)
 hold on
 % case 1
 h_1 = plot(f_swp,real(Y_inv_1.dq),'-','MarkerSize',5);  
-set(h_1,'linewidth',1.5,'Color',Color.blue.p75);
+set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % case 2
 h_2 = plot(f_swp,real(Y_inv_2.dq),'-','MarkerSize',5);  
-set(h_2,'linewidth',1.5,'Color',Color.red.p75);
+set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % case 3
 h_3 = plot(f_swp,real(Y_inv_3.dq),'-','MarkerSize',5);  
-set(h_3,'linewidth',1.5,'Color',Color.green.p75);
+set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 
 ylim([-10,10]);
 ylabel('Re\{Y_{inv}^{dq}(j\omega)\} in S')
@@ -94,13 +94,13 @@ subplot(2,2,3)
 hold on
 % case 1
 h_1 = plot(f_swp,real(Y_inv_1.qd),'-','MarkerSize',5);  
-set(h_1,'linewidth',1.5,'Color',Color.blue.p75);
+set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % case 2
 h_2 = plot(f_swp,real(Y_inv_2.qd),'-','MarkerSize',5);  
-set(h_2,'linewidth',1.5,'Color',Color.red.p75);
+set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % case 3
 h_3 = plot(f_swp,real(Y_inv_3.qd),'-','MarkerSize',5);  
-set(h_3,'linewidth',1.5,'Color',Color.green.p75);
+set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 
 ylim([-10,10]);
 ylabel('Re\{Y_{inv}^{qd}(j\omega)\} in S')
@@ -117,13 +117,13 @@ subplot(2,2,4)
 hold on
 % case 1
 h_1 = plot(f_swp,real(Y_inv_1.qq),'-','MarkerSize',5);  
-set(h_1,'linewidth',1.5,'Color',Color.blue.p75);
+set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % case 2
 h_2 = plot(f_swp,real(Y_inv_2.qq),'-','MarkerSize',5);  
-set(h_2,'linewidth',1.5,'Color',Color.red.p75);
+set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % case 3
 h_3 = plot(f_swp,real(Y_inv_3.qq),'-','MarkerSize',5);  
-set(h_3,'linewidth',1.5,'Color',Color.green.p75);
+set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 
 ylim([-10,10]);
 ylabel('Re\{Y_{inv}^{qq}(j\omega)\} in S')

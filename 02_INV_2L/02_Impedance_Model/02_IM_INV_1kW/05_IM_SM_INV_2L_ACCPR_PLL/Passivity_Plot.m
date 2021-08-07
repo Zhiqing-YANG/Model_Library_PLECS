@@ -1,54 +1,53 @@
 %% Passivity Plot 
 % ########################################################################
-% Impedance Model Passivity Plot 
-% Establishment: 28.11.2020 Jiani He, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
+% Passivity plot of impedance models
+% Establishment: 15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
-% load system
+%% Load System
 addpath('System/');
 eval('Def_System');
+Color = Def_Color();
 
+%% Operating Case
 % frequency range
-fi=0;
-ff=4;
-n_sample=1000;
+fi=1;
+ff=5;
+n_sample=3000;
 f_swp = logspace(fi,ff,n_sample);
 
 % change system parameters
-Ctrl.ACC.Kp = 7;
+Grid.Lg = 5.5e-3;
 
 % case 1
-Grid.Lg = 5.5e-3;
+Ctrl.ACC.Kp = 15;
 [Z_inv_1,Y_inv_1,Z_pcc_1,Y_pcc_1,Z_g_1,Y_g_1] = IM_INV_2L_ACCPR_PLL(Grid,Inv,Ctrl,f_swp);
 
 % case 2
-Grid.Lg = 9e-3;
+Ctrl.ACC.Kp = 10;
 [Z_inv_2,Y_inv_2,Z_pcc_2,Y_pcc_2,Z_g_2,Y_g_2] = IM_INV_2L_ACCPR_PLL(Grid,Inv,Ctrl,f_swp);
 
 % case 3
-Grid.Lg = 11e-3;
+Ctrl.ACC.Kp = 5;
 [Z_inv_3,Y_inv_3,Z_pcc_3,Y_pcc_3,Z_g_3,Y_g_3] = IM_INV_2L_ACCPR_PLL(Grid,Inv,Ctrl,f_swp);
 
 %% Passivity Plot
-% load color template
-eval('Def_Color');
-
 figure()
 
+% passivity plot in dd axis
 subplot(2,2,1)
 hold on 
 % case 1
 h_1 = plot(f_swp,real(Y_inv_1.dd),'-','MarkerSize',5);  
-set(h_1,'linewidth',1.5,'Color',blue75);
+set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % case 2
 h_2 = plot(f_swp,real(Y_inv_2.dd),'-','MarkerSize',5);  
-set(h_2,'linewidth',1.5,'Color',pink75);
+set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % case 3
 h_3 = plot(f_swp,real(Y_inv_3.dd),'-','MarkerSize',5);  
-set(h_3,'linewidth',1.5,'Color',green75);
+set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 
-ylim([-0.05,0.1]);
+ylim([-0.3,0.2]);
 ylabel('Re\{Y_{inv}^{dd}(j\omega)\} in S')
 % xlabel('Frequency in Hz')
 % legend('Kp^{dd}=0','Kp^{dd}=0.2','Kp^{dd}=0.4','Kp^{dd}=0.8');
@@ -58,19 +57,20 @@ box on
 set(findall(gcf,'-property','FontSize'),'FontSize',16)
 set(findall(gcf,'-property','Fontname'),'Fontname','Times New Roman')
 
+% passivity plot in dq axis
 subplot(2,2,2)
 hold on
 % case 1
 h_1 = plot(f_swp,real(Y_inv_1.dq),'-','MarkerSize',5);  
-set(h_1,'linewidth',1.5,'Color',blue75);
+set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % case 2
 h_2 = plot(f_swp,real(Y_inv_2.dq),'-','MarkerSize',5);  
-set(h_2,'linewidth',1.5,'Color',pink75);
+set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % case 3
 h_3 = plot(f_swp,real(Y_inv_3.dq),'-','MarkerSize',5);  
-set(h_3,'linewidth',1.5,'Color',green75);
+set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 
-ylim([-0.05,0.1]);
+ylim([-0.3,0.2]);
 ylabel('Re\{Y_{inv}^{dq}(j\omega)\} in S')
 % xlabel('Frequency in Hz')
 % legend('Kp^{dd}=0','Kp^{dd}=0.2','Kp^{dd}=0.4','Kp^{dd}=0.8');
@@ -80,19 +80,20 @@ box on
 set(findall(gcf,'-property','FontSize'),'FontSize',16)
 set(findall(gcf,'-property','Fontname'),'Fontname','Times New Roman')
 
+% passivity plot in qd axis
 subplot(2,2,3)
 hold on
 % case 1
 h_1 = plot(f_swp,real(Y_inv_1.qd),'-','MarkerSize',5);  
-set(h_1,'linewidth',1.5,'Color',blue75);
+set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % case 2
 h_2 = plot(f_swp,real(Y_inv_2.qd),'-','MarkerSize',5);  
-set(h_2,'linewidth',1.5,'Color',pink75);
+set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % case 3
 h_3 = plot(f_swp,real(Y_inv_3.qd),'-','MarkerSize',5);  
-set(h_3,'linewidth',1.5,'Color',green75);
+set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 
-ylim([-0.05,0.1]);
+ylim([-0.3,0.2]);
 ylabel('Re\{Y_{inv}^{qd}(j\omega)\} in S')
 xlabel('Frequency in Hz')
 % legend('Kp^{dd}=0','Kp^{dd}=0.2','Kp^{dd}=0.4','Kp^{dd}=0.8');
@@ -102,17 +103,18 @@ box on
 set(findall(gcf,'-property','FontSize'),'FontSize',16)
 set(findall(gcf,'-property','Fontname'),'Fontname','Times New Roman')
 
+% passivity plot in qq axis
 subplot(2,2,4)
 hold on
 % case 1
 h_1 = plot(f_swp,real(Y_inv_1.qq),'-','MarkerSize',5);  
-set(h_1,'linewidth',1.5,'Color',blue75);
+set(h_1,'linewidth',1.5,'Color',Color.blue.p100);
 % case 2
 h_2 = plot(f_swp,real(Y_inv_2.qq),'-','MarkerSize',5);  
-set(h_2,'linewidth',1.5,'Color',pink75);
+set(h_2,'linewidth',1.5,'Color',Color.red.p100);
 % case 3
 h_3 = plot(f_swp,real(Y_inv_3.qq),'-','MarkerSize',5);  
-set(h_3,'linewidth',1.5,'Color',green75);
+set(h_3,'linewidth',1.5,'Color',Color.orange.p100);
 
 ylim([-0.3,0.2]);
 ylabel('Re\{Y_{inv}^{qq}(j\omega)\} in S')

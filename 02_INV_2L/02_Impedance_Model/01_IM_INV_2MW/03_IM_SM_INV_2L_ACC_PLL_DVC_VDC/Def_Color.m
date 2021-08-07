@@ -10,8 +10,8 @@ function Color = Def_Color()
 Color.black.p100 = [0,0,0]/255;
 Color.black.p75 = [100,101,103]/255;
 Color.black.p50 = [156,158,159]/255;
-Color.black.p50 = [207,209,210]/255;
-Color.black.p50 = [236,237,237]/255;
+Color.black.p25 = [207,209,210]/255;
+Color.black.p10 = [236,237,237]/255;
 
 %% Blue
 Color.blue.p100 = [0,84,159]/255;
