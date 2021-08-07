@@ -12,7 +12,6 @@
 % Output:
 %       - [matrix] eigenvalues of impedance ratio at a given frequency range
 % Establishment: 15.12.2020 Jiani He, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function eig = solve_eig(Grid,Inv,Ctrl,f_swp,opt)
@@ -29,7 +28,7 @@ a_old = 0;
 
 for f = f_swp
     w = 2*pi*f;
-    [Z_inv_w,Y_inv_w,Z_pcc_w,Y_pcc_w,Z_g_w,Y_g_w] = IM_INV_2L_ACC_PLL_w(Grid,Inv,Ctrl,w);
+    [Z_inv_w,Y_inv_w,Z_pcc_w,Y_pcc_w,Z_g_w,Y_g_w] = IM_INV_2L_ACC_PLL_DVC_w(Grid,Inv,Ctrl,w);
     L_w = Y_pcc_w*Z_g_w;
 
     % find eigenvalues of the impedance ratio
@@ -40,8 +39,10 @@ for f = f_swp
     e(1,1) = 0.5*(L_w(1,1)+L_w(2,2))+b;   % eigenvalue 1
     e(2,1) = 0.5*(L_w(1,1)+L_w(2,2))-b;   % eigenvalue 2
     
-    eig = [eig,e];
     a_old = a;
+    
+    eig = [eig,e];
+    
 end
 
 end

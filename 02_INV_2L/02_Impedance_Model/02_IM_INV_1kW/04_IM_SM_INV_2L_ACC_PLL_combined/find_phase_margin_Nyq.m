@@ -13,10 +13,10 @@
 %       - [vector] vector of frequencies of unit mag. points
 %       - [vector] vector of phase margin
 % Establishment: 25.01.2020 Jiani He, PGS, RWTH Aachen
-% Last Change:   25.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function [f_int,phs_int] = find_phase_margin_Nyq(e,f_swp,n_sample,opt)
+% initialization
 f_int = [];
 phs_int = [];
 phs_int_min = 180;
@@ -90,4 +90,5 @@ if opt == 2
         fprintf('Eigenvalue %d has the minimum phase margin %.2f deg @ %.2f Hz. \n',e_int_min,phs_int_min,f_int_min);
     end
 end
+
 end

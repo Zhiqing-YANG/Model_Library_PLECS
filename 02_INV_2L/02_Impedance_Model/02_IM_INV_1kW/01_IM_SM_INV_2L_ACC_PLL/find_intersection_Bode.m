@@ -14,14 +14,16 @@
 %       - [obj] vector of frequency where |Z1.dd|&|Z2.dd| or |Z1.qq|&|Z2.qq| intersect 
 %       - [obj] vector of phase difference where |Z1.dd|&|Z2.dd| or |Z1.qq|&|Z2.qq| intersect
 % Establishment: 07.01.2020 Jiani He, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function [f_int,phs_int] = find_intersection_Bode(Z1,Z2,f_swp,n_sample,opt)
+% initialization
 f_int.dd = [];
 f_int.qq = [];
 phs_int.dd = [];
 phs_int.qq = [];
+i_int_dd = [];
+i_int_qq = [];
 d_angle_max = 0;
 
 % dd axis
@@ -30,7 +32,7 @@ if opt == 1
 end
 d_abs_dd = abs(Z1.dd)-abs(Z2.dd);
 d_angle_dd = abs((angle(Z1.dd)-angle(Z2.dd))/pi*180);
-i_int_dd = [];
+
 for i = 1:n_sample-1
     if d_abs_dd(i)*d_abs_dd(i+1)<0
         i_int_dd = [i_int_dd,i];
@@ -58,7 +60,7 @@ if opt == 1
 end
 d_abs_qq = abs(Z1.qq)-abs(Z2.qq);
 d_angle_qq = abs((angle(Z1.qq)-angle(Z2.qq))/pi*180);
-i_int_qq = [];
+
 for i = 1:n_sample-1
     if d_abs_qq(i)*d_abs_qq(i+1)<0
         i_int_qq = [i_int_qq,i];
@@ -87,4 +89,5 @@ if opt == 2
         fprintf('Intersection point in qq axis @ %.2f Hz, phase difference: %.2f deg. \n',f_int_max,d_angle_max);
     end
 end
+
 end

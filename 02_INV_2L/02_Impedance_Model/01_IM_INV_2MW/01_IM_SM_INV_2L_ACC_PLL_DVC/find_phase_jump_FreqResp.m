@@ -13,11 +13,13 @@
 %       - [vector] vector of frequency where -180/180 phase jump happens
 %       - [vector] vector of magnitude where -180/180 phase jump happens
 % Establishment: 07.01.2020 Jiani He, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function [f_jmp,mag_jmp] = find_phase_jump_FreqResp(e,f_swp,n_sample,opt)
+% initialization
 f_jmp = [];
+i_jump_1 = [];
+i_jump_2 = [];
 mag_jmp = [];
 mag_jmp_max = -100;
 
@@ -27,7 +29,7 @@ if opt == 1
 end
 mag1 = 20*log10(abs(e(1,:)));
 phase1 = 180/pi*angle(e(1,:));
-i_jump_1 = [];
+
 for i = 1:n_sample-1
     if phase1(i+1)-phase1(i)>180
         i_jump_1 = [i_jump_1,i];
@@ -55,7 +57,7 @@ if opt == 1
 end
 mag2 = 20*log10(abs(e(2,:)));
 phase2 = 180/pi*angle(e(2,:));
-i_jump_2 = [];
+
 for i = 1:n_sample-1
     if phase2(i+1)-phase2(i)>180
         i_jump_2 = [i_jump_2,i];
@@ -82,4 +84,5 @@ if opt == 2
         fprintf('Phase jump of eigenvalue %d @ %.2f Hz, magnitude: %.2f dB. \n',e_jmp_max,f_jmp_max,mag_jmp_max);
     end
 end
+
 end
