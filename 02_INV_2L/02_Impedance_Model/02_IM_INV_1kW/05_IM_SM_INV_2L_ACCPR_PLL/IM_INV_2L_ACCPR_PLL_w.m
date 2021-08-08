@@ -16,11 +16,9 @@
 %       - VFF
 %       - MBC
 % Establishment: 18.03.2019, Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function [Z_inv_w, Y_inv_w, Z_pcc_w, Y_pcc_w, Z_g_w, Y_g_w] = IM_INV_2L_ACCPR_PLL_w(Grid,Inv,Ctrl,w)
-
 %% Calculation of the Steady-State Values
 Inv.OP.I_L1_d = Ctrl.I_ref_d;
 Inv.OP.I_L1_q = 0;
@@ -81,5 +79,6 @@ Y_pcc_w = I/Z_pcc_w;
 Z_g_w = [(1i*w)*Grid.Lg+Grid.Rg, -Grid.wg*Grid.Lg; Grid.wg*Grid.Lg, (1i*w)*Grid.Lg+Grid.Rg]; 
 
 % admittance
-Y_g_w = I/Z_g_w;          
+Y_g_w = I/Z_g_w;     
+
 end

@@ -9,7 +9,6 @@
 % Output:
 %       - [obj] impedance/admitance matrices at a given frequency range
 % Establishment: 15.01.2021 Jiani He, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function [Z_inv, Y_inv, Z_pcc, Y_pcc, Z_g, Y_g] = IM_INV_2L_ACC_PLL_DVC(Grid,Inv,Ctrl,f_swp)

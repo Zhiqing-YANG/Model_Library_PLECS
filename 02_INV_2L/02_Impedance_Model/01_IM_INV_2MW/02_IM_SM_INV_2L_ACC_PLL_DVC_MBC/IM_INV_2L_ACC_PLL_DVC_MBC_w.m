@@ -16,11 +16,9 @@
 %       - VFF
 %       - MBC
 % Establishment: 18.03.2019, Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function [Z_inv_w, Y_inv_w, Z_pcc_w, Y_pcc_w, Z_g_w, Y_g_w] = IM_INV_2L_ACC_PLL_DVC_MBC_w(Grid,Inv,Ctrl,w)
-
 %% Calculation of the Steady-State Values
 Inv.OP.I_L1_d = Inv.OP.V_dc*Inv.OP.I_pv/(1.5*Grid.V_amp);
 Inv.OP.I_L1_q = 0;
@@ -91,7 +89,7 @@ Y_inv_w = I/Z_inv_w;
 
 %% Impedance Model of Inverter with L2, C
 % impedance
-Z_pcc_w =inv(inv(Z_inv_w)+inv(inv(Y_C)+Z_Rd))+Z_L2; 
+Z_pcc_w = inv(inv(Z_inv_w)+inv(inv(Y_C)+Z_Rd))+Z_L2; 
           
 % admittance 
 Y_pcc_w = I/Z_pcc_w;
@@ -101,5 +99,6 @@ Y_pcc_w = I/Z_pcc_w;
 Z_g_w = [(1i*w)*Grid.Lg+Grid.Rg, -Grid.wg*Grid.Lg; Grid.wg*Grid.Lg, (1i*w)*Grid.Lg+Grid.Rg]; 
 
 % admittance
-Y_g_w = I/Z_g_w;          
+Y_g_w = I/Z_g_w;   
+
 end

@@ -15,11 +15,9 @@
 %       - AD
 %       - VFF
 % Establishment: 18.03.2019, Zhiqing Yang, PGS, RWTH Aachen
-% Last Change:   15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
 function [Z_inv_w, Y_inv_w, Z_pcc_w, Y_pcc_w, Z_g_w, Y_g_w] = IM_INV_2L_ACC_PLL_DVC_w(Grid,Inv,Ctrl,w)
-
 %% Calculation of the Steady-State Values
 Inv.OP.I_L1_d = Inv.OP.V_dc*Inv.OP.I_pv/(1.5*Grid.V_amp);
 Inv.OP.I_L1_q = 0;
@@ -73,10 +71,10 @@ G_PLL_ic = [0,Inv.OP.I_C_q*G_PLL;0,-Inv.OP.I_C_d*G_PLL];        % G_PLL_ic
 G_DVC = [Ctrl.DVC.Kp+Ctrl.DVC.Ki/(1i*w);0];                     % PI voltage controller in dq-axis
 
 % virtual damping control
-H_damp_dd=Ctrl.VDC.Gdd.Kp+Ctrl.VDC.Gdd.Ki/(1i*w);   
-H_damp_qq=Ctrl.VDC.Gqq.Kp+Ctrl.VDC.Gqq.Ki/(1i*w);   
-H_damp_dq=Ctrl.VDC.Gdq.Kp+Ctrl.VDC.Gdq.Ki/(1i*w);                           
-H_damp_qd=Ctrl.VDC.Gqd.Kp+Ctrl.VDC.Gqd.Ki/(1i*w);   
+H_damp_dd = Ctrl.VDC.Gdd.Kp+Ctrl.VDC.Gdd.Ki/(1i*w)+Ctrl.VDC.Gdd.Kd*Ctrl.VDC.w_LPF*(1i*w)/((1i*w)+Ctrl.VDC.w_LPF);   
+H_damp_qq = Ctrl.VDC.Gqq.Kp+Ctrl.VDC.Gqq.Ki/(1i*w)+Ctrl.VDC.Gqq.Kd*Ctrl.VDC.w_LPF*(1i*w)/((1i*w)+Ctrl.VDC.w_LPF);   
+H_damp_dq = 0;                           
+H_damp_qd = 0;     
 G_damp = [H_damp_dd,H_damp_dq;H_damp_qd,H_damp_qq];
 
 % effect of dc-link 
@@ -97,7 +95,7 @@ Y_inv_w = I/Z_inv_w;
 
 %% Impedance Model of Inverter with L2, C
 % impedance
-Z_pcc_w =inv(inv(Z_inv_w)+inv(inv(Y_C)+Z_Rd))+Z_L2; 
+Z_pcc_w = inv(inv(Z_inv_w)+inv(inv(Y_C)+Z_Rd))+Z_L2; 
           
 % admittance 
 Y_pcc_w = I/Z_pcc_w;
@@ -107,5 +105,6 @@ Y_pcc_w = I/Z_pcc_w;
 Z_g_w = [(1i*w)*Grid.Lg+Grid.Rg, -Grid.wg*Grid.Lg; Grid.wg*Grid.Lg, (1i*w)*Grid.Lg+Grid.Rg]; 
 
 % admittance
-Y_g_w = I/Z_g_w;          
+Y_g_w = I/Z_g_w;  
+
 end
