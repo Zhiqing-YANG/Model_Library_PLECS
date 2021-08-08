@@ -23,9 +23,9 @@ Inv = Def_Inverter();
 %% Control
 Ctrl = Def_Control(Grid,Inv);
 % change of inverter parameters
-% Ctrl.VDC.Gqq.Kp = 0;
-% Ctrl.VDC.Gqq.Ki = 0;
 % Ctrl.VDC.Gdd.Kp = 0;
 % Ctrl.VDC.Gdd.Ki = 0;
-Ctrl.MBC.Kp = 0;
-% Ctrl.DVC.Kp  = -35;
+% Ctrl.VDC.Gdd.Kd = 0;
+% Ctrl.VDC.Gqq.Kp = 0;
+% Ctrl.VDC.Gqq.Ki = 0;
+% Ctrl.VDC.Gqq.Kd = 0;

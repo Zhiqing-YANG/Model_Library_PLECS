@@ -23,7 +23,7 @@ Ctrl.T_dh = 1.5*Ctrl.T_sp;         % [s] equiv. delay
 % bandwidth: 300 [Hz]
 Ctrl.ACC.Kp = 0.23;                % [] Kp of ACC
 Ctrl.ACC.Ki = 28;                  % [] Ki of ACC
-Ctrl.ACC.wL = 2*pi*Grid.fg*Inv.Filter.L1; % [] cross-coupling term
+Ctrl.ACC.wL = Grid.wg*Inv.Filter.L1; % [] cross-coupling term
 Ctrl.ACC.K_VFF = 2*pi*30000;       % [] filter bandwidth of VFF 
 Ctrl.ACC.K_AD = 0.05;              % [] active damping factor
 Ctrl.ACC.SatLim = inf;             % [] Saturation limit of integrator
@@ -32,7 +32,7 @@ Ctrl.ACC.SatLim = inf;             % [] Saturation limit of integrator
 % bandwidth: 30 [Hz]
 Ctrl.PLL.Kp = 0.36;                % [] Kp of PLL
 Ctrl.PLL.Ki = 40;                  % [] Ki of PLL
-Ctrl.PLL.w1 = 2*pi*Grid.fg;        % [] ideal grid angular frequency
+Ctrl.PLL.w1 = Grid.wg;             % [] ideal grid angular frequency
 Ctrl.PLL.SatLim = inf;             % [] Saturation limit of integrator
 
 % direct-voltage control 
@@ -50,14 +50,13 @@ Ctrl.MBC.Theta = Ctrl.MBC.Kp*Ctrl.T_sp*Grid.wg;                 % [rad] phase co
 % virtual damping control
 % ref:  Virtual Damping Control Design of Three-Phase Grid-Tied PV Inverters for Passivity Enhancement
 %       https://ieeexplore.ieee.org/abstract/document/9247289
-Ctrl.VDC.Gqq.Kp = 2;
-Ctrl.VDC.Gqq.Ki = 2500;
-Ctrl.VDC.Gdd.Kp = 4;
+Ctrl.VDC.Gdd.Kp = 1;
 Ctrl.VDC.Gdd.Ki = 0;
-Ctrl.VDC.Gdq.Kp = 0;
-Ctrl.VDC.Gdq.Ki = 0;
-Ctrl.VDC.Gqd.Kp = 0;
-Ctrl.VDC.Gqd.Ki = 0;
+Ctrl.VDC.Gdd.Kd = -0.35e-3;
+Ctrl.VDC.Gqq.Kp = 0;
+Ctrl.VDC.Gqq.Ki = 2080;
+Ctrl.VDC.Gqq.Kd = -0.35e-3;
+Ctrl.VDC.w_LPF = 2*pi*1500;
 
 %% Control Reference
 Ctrl.I_ref_d = Inv.OP.V_dc*Inv.OP.I_pv/(1.5*Grid.V_amp);           % [A] d-axis ref current

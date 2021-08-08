@@ -51,14 +51,13 @@ Ctrl.MBC.Theta = Ctrl.MBC.Kp*Ctrl.T_sp*Grid.wg;  % [rad] phase correction angle
 % virtual damping control
 % ref:  Virtual Damping Control Design of Three-Phase Grid-Tied PV Inverters for Passivity Enhancement
 %       https://ieeexplore.ieee.org/abstract/document/9247289
-Ctrl.VDC.Gqq.Kp = 2;
-Ctrl.VDC.Gqq.Ki = 2500;
-Ctrl.VDC.Gdd.Kp = 4;
+Ctrl.VDC.Gdd.Kp = 1;
 Ctrl.VDC.Gdd.Ki = 0;
-Ctrl.VDC.Gdq.Kp = 0;
-Ctrl.VDC.Gdq.Ki = 0;
-Ctrl.VDC.Gqd.Kp = 0;
-Ctrl.VDC.Gqd.Ki = 0;
+Ctrl.VDC.Gdd.Kd = -0.35e-3;
+Ctrl.VDC.Gqq.Kp = 0;
+Ctrl.VDC.Gqq.Ki = 2080;
+Ctrl.VDC.Gqq.Kd = -0.35e-3;
+Ctrl.VDC.w_LPF = 2*pi*1500;
 
 %% Control Reference
 Ctrl.I_ref_d = Inv.OP.V_dc*Inv.OP.I_pv/(1.5*Grid.V_amp);           % [A] d-axis ref current

@@ -40,12 +40,11 @@ Ctrl.PLL.SatLim = inf;              % [] Saturation limit of integrator
 %       https://ieeexplore.ieee.org/abstract/document/9247289
 Ctrl.VDC.Gdd.Kp = 0.01;
 Ctrl.VDC.Gdd.Ki = 0;
+Ctrl.VDC.Gdd.Kd = -10e-6;
 Ctrl.VDC.Gqq.Kp = 0.01;
 Ctrl.VDC.Gqq.Ki = 30;
-Ctrl.VDC.Gdq.Kp = 0;
-Ctrl.VDC.Gdq.Ki = 0;
-Ctrl.VDC.Gqd.Kp = 0;
-Ctrl.VDC.Gqd.Ki = 0;
+Ctrl.VDC.Gqq.Kd = -10e-6;
+Ctrl.VDC.w_LPF = 2*pi*700;
 
 %% Control Reference
 Ctrl.I_ref_d = 10;                  % [A] d-axis ref current

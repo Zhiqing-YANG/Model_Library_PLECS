@@ -24,8 +24,9 @@ Inv.OP.I_pv = 1500;                     % [A] operating condition pv current
 %% Control
 Ctrl = Def_Control(Grid,Inv);
 % change of inverter parameters
-Ctrl.ACC.K_VFF = 2*pi*3000;
-% Ctrl.VDC.Gqq.Kp = 0;
-% Ctrl.VDC.Gqq.Ki = 0;
 % Ctrl.VDC.Gdd.Kp = 0;
 % Ctrl.VDC.Gdd.Ki = 0;
+% Ctrl.VDC.Gdd.Kd = 0;
+% Ctrl.VDC.Gqq.Kp = 0;
+% Ctrl.VDC.Gqq.Ki = 0;
+% Ctrl.VDC.Gqq.Kd = 0;
