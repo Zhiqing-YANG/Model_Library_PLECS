@@ -11,10 +11,8 @@
 % Consider:
 %       - ACC
 %       - PLL
-%       - DVC
 %       - AD
 %       - VFF
-%       - MBC
 % Establishment: 18.03.2019, Zhiqing Yang, PGS, RWTH Aachen
 % ########################################################################
 

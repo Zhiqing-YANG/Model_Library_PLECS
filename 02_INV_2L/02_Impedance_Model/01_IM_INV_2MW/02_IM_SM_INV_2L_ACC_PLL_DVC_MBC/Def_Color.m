@@ -64,10 +64,10 @@ Color.bordeaux.p10 = [245,232,229]/255;
 
 %% Violet
 Color.violet.p100 = [97,33,88]/255;
-Color.violett.p75 = [131,78,117]/255;
-Color.violett.p50 = [168,133,158]/255;
-Color.violett.p25 = [210,192,205]/255;
-Color.violett.p10 = [237,229,234]/255;
+Color.violet.p75 = [131,78,117]/255;
+Color.violet.p50 = [168,133,158]/255;
+Color.violet.p25 = [210,192,205]/255;
+Color.violet.p10 = [237,229,234]/255;
 
 %% Lila
 Color.lila.p100 = [122,111,172]/255;

@@ -13,8 +13,8 @@ Req.ACC.BW = 300;           % [Hz] ACC bandwidth
 Req.ACC.PM = 60;            % [deg] ACC phase margin
 Req.PLL.BW = 30;            % [Hz] PLL bandwidth
 Req.PLL.PM = 60;            % [deg] PLL phase margin
-Req.DVC.BW = 20;            % [Hz] ACC bandwidth
-Req.DVC.PM = 60;            % [deg] ACC phase margin
+Req.DVC.BW = 20;            % [Hz] DVC bandwidth
+Req.DVC.PM = 60;            % [deg] DVC phase margin
 Design = Design_Ctrl(Inv,Grid,Ctrl,Req,2);
 
 % update design results

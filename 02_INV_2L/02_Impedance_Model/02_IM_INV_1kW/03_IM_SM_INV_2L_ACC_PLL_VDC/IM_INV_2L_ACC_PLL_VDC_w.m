@@ -11,7 +11,6 @@
 % Consider:
 %       - ACC
 %       - PLL
-%       - DVC
 %       - AD
 %       - VFF
 %       - VDC
