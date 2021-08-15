@@ -30,7 +30,7 @@ Ctrl.ACC.SatLim = inf;             % [] Saturation limit of integrator
 
 % alternating-voltage controller 
 % bandwidth: 50 [Hz]
-Ctrl.AVC.Kp = 0.2;                 % [] Kp of AVC
+Ctrl.AVC.Kp = 0.3;                 % [] Kp of AVC
 Ctrl.AVC.Ki = 2;                   % [] Ki of AVC
 Ctrl.AVC.wC = Grid.wg*Inv.Filter.C; % [] cross-coupling term
 Ctrl.AVC.f1 = Grid.fg;             % [] cross-coupling term
