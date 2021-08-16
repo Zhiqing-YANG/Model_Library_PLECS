@@ -2,7 +2,7 @@
  * Header file for: SM_Coder_FSM_PLL_ACC_DVC/ Three-Phase 2L Grid-Tied  Inverter/LaunchPad
  * Generated with : PLECS 4.4.5
  *                  TI2837xS 1.2
- * Generated on   : 13 Aug 2021 14:49:06
+ * Generated on   : 16 Aug 2021 12:45:08
  */
 
 #ifndef PLECS_HEADER_LaunchPad_h_
@@ -51,7 +51,7 @@ typedef struct {
   double Saturation;                   /* /LaunchPad/ADC Decode/Saturation */
   double Saturation1;                  /* /LaunchPad/Controller/Modulator/Saturation1 */
   double Saturation_1[3];              /* /LaunchPad/Controller/Modulator/Saturation */
-  double StateMachine[6];              /* /LaunchPad/State Machine */
+  double StateMachine[8];              /* /LaunchPad/State Machine */
   double SW_1;                         /* /LaunchPad/SW_1 */
   double Delay[3];                     /* /LaunchPad/Controller/Delay */
   double Integrator;                   /* /LaunchPad/Controller/Phase-Locked Loop/Integrator */
@@ -86,7 +86,6 @@ typedef struct {
   double Fcn_2;                        /* /LaunchPad/ADC Decode/Calibration V_ac/Fcn */
   double Fcn1_1;                       /* /LaunchPad/ADC Decode/Calibration V_ac/Fcn1 */
   double Fcn2_1;                       /* /LaunchPad/ADC Decode/Calibration V_ac/Fcn2 */
-  bool LogicalOperator5;               /* /LaunchPad/Protection/Logical Operator5 */
   double Sin_3;                        /* /LaunchPad/Controller/Phase-Locked Loop/3ph->RRF/Sin */
   double Cos_3;                        /* /LaunchPad/Controller/Phase-Locked Loop/3ph->RRF/Cos */
   double abc_q_1;                      /* /LaunchPad/Controller/Phase-Locked Loop/3ph->RRF/abc->q */

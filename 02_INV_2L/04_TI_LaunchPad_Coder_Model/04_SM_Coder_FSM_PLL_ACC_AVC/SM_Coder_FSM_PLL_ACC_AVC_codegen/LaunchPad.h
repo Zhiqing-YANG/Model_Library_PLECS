@@ -2,7 +2,7 @@
  * Header file for: SM_Coder_FSM_PLL_ACC_AVC/ Three-Phase 2L Grid-Tied  Inverter/LaunchPad
  * Generated with : PLECS 4.4.5
  *                  TI2837xS 1.2
- * Generated on   : 14 Aug 2021 11:21:10
+ * Generated on   : 16 Aug 2021 12:23:51
  */
 
 #ifndef PLECS_HEADER_LaunchPad_h_
@@ -51,7 +51,7 @@ typedef struct {
   double TriangularWave;               /* /LaunchPad/Controller/Alternating-Voltage Control/Triangular Wave */
   double Saturation1;                  /* /LaunchPad/Controller/Modulator/Saturation1 */
   double Saturation_1[3];              /* /LaunchPad/Controller/Modulator/Saturation */
-  double StateMachine[7];              /* /LaunchPad/State Machine */
+  double StateMachine[8];              /* /LaunchPad/State Machine */
   double Fcn;                          /* /LaunchPad/ADC Decode/Calibration V_ac/Fcn */
   double Cos;                          /* /LaunchPad/Controller/Alternating-Voltage Control/3ph->RRF7/Cos */
   double Fcn1;                         /* /LaunchPad/ADC Decode/Calibration V_ac/Fcn1 */
@@ -87,10 +87,8 @@ typedef struct {
   double Sin_3;                        /* /LaunchPad/Controller/Alternating-Current Control/PI/RRF->SRF/Sin */
   double dq_alpha;                     /* /LaunchPad/Controller/Alternating-Current Control/PI/RRF->SRF/dq->alpha */
   double dq_beta;                      /* /LaunchPad/Controller/Alternating-Current Control/PI/RRF->SRF/dq->beta */
-  double Fcn_2;                        /* /LaunchPad/ADC Decode/Calibration V_dc/Fcn */
   double Sum_2[3];                     /* /LaunchPad/Controller/Modulator/[-1 1] -> [0 1]/Sum */
   bool Switch_1;                       /* /LaunchPad/Controller/Switch */
-  bool LogicalOperator5;               /* /LaunchPad/Protection/Logical Operator5 */
   double Gain2;                        /* /LaunchPad/Controller/Alternating-Voltage Control/d-axis PI Regulator/Gain2 */
   double Gain2_1;                      /* /LaunchPad/Controller/Alternating-Voltage Control/q-axis PI Regulator/Gain2 */
   double Cos_4;                        /* /LaunchPad/Controller/Alternating-Current Control/PI/3ph->RRF9/Cos */

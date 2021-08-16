@@ -2,7 +2,7 @@
  * Header file for: SM_Coder_FSM_OL/ Three-Phase 2L Grid-Tied  Inverter/LaunchPad
  * Generated with : PLECS 4.4.5
  *                  TI2837xS 1.2
- * Generated on   : 13 Aug 2021 14:29:14
+ * Generated on   : 16 Aug 2021 10:59:15
  */
 
 #ifndef PLECS_HEADER_LaunchPad_h_
@@ -40,13 +40,12 @@ typedef struct {
   double Saturation;                   /* /LaunchPad/ADC Decode/Saturation */
   double TriangularWave;               /* /LaunchPad/Controller/Modulator/Triangular Wave */
   double Saturation_1[3];              /* /LaunchPad/Controller/Modulator/Saturation */
-  double StateMachine[6];              /* /LaunchPad/State Machine */
+  double StateMachine[8];              /* /LaunchPad/State Machine */
   double SW_1;                         /* /LaunchPad/SW_1 */
   double Cos;                          /* /LaunchPad/Controller/Modulator/RRF->3ph/Cos */
   double Sin;                          /* /LaunchPad/Controller/Modulator/RRF->3ph/Sin */
   double dq_a;                         /* /LaunchPad/Controller/Modulator/RRF->3ph/dq->a */
   double dq_b;                         /* /LaunchPad/Controller/Modulator/RRF->3ph/dq->b */
-  bool LogicalOperator5;               /* /LaunchPad/Protection/Logical Operator5 */
 } LaunchPad_BlockOutputs;
 
 extern LaunchPad_BlockOutputs LaunchPad_B;

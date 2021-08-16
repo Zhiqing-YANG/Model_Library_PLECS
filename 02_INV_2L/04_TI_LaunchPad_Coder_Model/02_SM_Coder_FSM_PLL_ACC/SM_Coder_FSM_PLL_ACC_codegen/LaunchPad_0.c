@@ -1,7 +1,7 @@
 /*
  * State machine file for: LaunchPad/State Machine
  * Generated with    : PLECS 4.4.5
- * Generated on      : 13 Aug 2021 14:43:01
+ * Generated on      : 16 Aug 2021 12:33:33
  */
 
 typedef double real_t;
@@ -42,7 +42,6 @@ enum FSM_Transition
 {
   FSM_TRANSITION_NONE,
   FSM_TRANSITION_S0IDLE_1,
-  FSM_TRANSITION_S0IDLE_2,
   FSM_INITIAL_TRANSITION,
   FSM_TRANSITION_S1OPENLOOP_1,
   FSM_TRANSITION_S1OPENLOOP_2,
@@ -71,11 +70,11 @@ enum FSM_Transition
 #define SetWarningMessage(string)
 
 /* input variables */
-#define PWM_ON                         (*fsm_struct->fsm_inputs[0][0])
-#define PWM_OFF                        (*fsm_struct->fsm_inputs[1][0])
+#define PLL_ON                         (*fsm_struct->fsm_inputs[0][0])
+#define PLL_OFF                        (*fsm_struct->fsm_inputs[1][0])
 #define ACC_ON                         (*fsm_struct->fsm_inputs[2][0])
 #define ACC_OFF                        (*fsm_struct->fsm_inputs[3][0])
-#define Error                          (*fsm_struct->fsm_inputs[4][0])
+#define PROTECT                        (*fsm_struct->fsm_inputs[4][0])
 
 /* output variables */
 #define State                          (*fsm_struct->fsm_outputs[0][0])
@@ -84,6 +83,8 @@ enum FSM_Transition
 #define UNITS2                         (*fsm_struct->fsm_outputs[3][0])
 #define UNITS3                         (*fsm_struct->fsm_outputs[4][0])
 #define SW_Grid                        (*fsm_struct->fsm_outputs[5][0])
+#define EN_PWM                         (*fsm_struct->fsm_outputs[6][0])
+#define ERROR                          (*fsm_struct->fsm_outputs[7][0])
 
 static void fsm_checkAfterTriggerOverflow(const struct FSM_Struct *fsm_struct,
   double fsm_value)
@@ -100,7 +101,6 @@ static void fsm_state_S0Idle_EnterAction(const struct FSM_Struct* fsm_struct)
   UNITS1 = 0;
   UNITS2 = 0;
   UNITS3 = 0;
-  SW_Grid = 0;
 }
 
 static void fsm_state_S1OpenLoop_EnterAction(const struct FSM_Struct* fsm_struct)
@@ -110,7 +110,6 @@ static void fsm_state_S1OpenLoop_EnterAction(const struct FSM_Struct* fsm_struct
   UNITS1 = 0;
   UNITS2 = 0;
   UNITS3 = 0;
-  SW_Grid = 0;
 }
 
 static void fsm_state_S9Error_EnterAction(const struct FSM_Struct* fsm_struct)
@@ -120,7 +119,6 @@ static void fsm_state_S9Error_EnterAction(const struct FSM_Struct* fsm_struct)
   UNITS1 = 0;
   UNITS2 = 0;
   UNITS3 = 1;
-  SW_Grid = 0;
 }
 
 static void fsm_state_S2OpenLoopConnect_EnterAction(const struct FSM_Struct*
@@ -131,7 +129,6 @@ static void fsm_state_S2OpenLoopConnect_EnterAction(const struct FSM_Struct*
   UNITS1 = 1;
   UNITS2 = 0;
   UNITS3 = 0;
-  SW_Grid = 1;
 }
 
 static void fsm_state_S3ACC_EnterAction(const struct FSM_Struct* fsm_struct)
@@ -141,7 +138,43 @@ static void fsm_state_S3ACC_EnterAction(const struct FSM_Struct* fsm_struct)
   UNITS1 = 1;
   UNITS2 = 0;
   UNITS3 = 0;
+}
+
+static void fsm_state_S0Idle_DuringAction(const struct FSM_Struct* fsm_struct)
+{
+  SW_Grid = 0;
+  EN_PWM = 0;
+  ERROR = 0;
+}
+
+static void fsm_state_S1OpenLoop_DuringAction(const struct FSM_Struct*
+  fsm_struct)
+{
+  SW_Grid = 0;
+  EN_PWM = 1;
+  ERROR = 0;
+}
+
+static void fsm_state_S9Error_DuringAction(const struct FSM_Struct* fsm_struct)
+{
   SW_Grid = 1;
+  EN_PWM = 0;
+  ERROR = 1;
+}
+
+static void fsm_state_S2OpenLoopConnect_DuringAction(const struct FSM_Struct*
+  fsm_struct)
+{
+  SW_Grid = 1;
+  EN_PWM = 1;
+  ERROR = 0;
+}
+
+static void fsm_state_S3ACC_DuringAction(const struct FSM_Struct* fsm_struct)
+{
+  SW_Grid = 1;
+  EN_PWM = 1;
+  ERROR = 0;
 }
 
 void LaunchPad_0_fsm_start(const struct FSM_Struct *fsm_struct)
@@ -173,25 +206,23 @@ void LaunchPad_0_fsm_output(const struct FSM_Struct *fsm_struct)
     switch ((int)CurrentState)
     {
      case FSM_STATE_S0IDLE:
-      if (Error && !PreviousTriggerValue(0)) {
+      if (PLL_ON && !PreviousTriggerValue(0)) {
         TakenTransition(0) = FSM_TRANSITION_S0IDLE_1;
-        fsm_state_S9Error_EnterAction(fsm_struct);
-        CurrentState = FSM_STATE_S9ERROR;
-      } else if (PWM_ON && !PreviousTriggerValue(1)) {
-        TakenTransition(0) = FSM_TRANSITION_S0IDLE_2;
         fsm_state_S1OpenLoop_EnterAction(fsm_struct);
-        AfterTriggerTimestamp(0) = ceil((0.05) * SamplingFrequency);
+        AfterTriggerTimestamp(0) = ceil((10) * SamplingFrequency);
         fsm_checkAfterTriggerOverflow(fsm_struct, AfterTriggerTimestamp(0));
         CurrentState = FSM_STATE_S1OPENLOOP;
+      } else {
+        fsm_state_S0Idle_DuringAction(fsm_struct);
       }
       break;
 
      case FSM_STATE_S1OPENLOOP:
-      if (Error && !PreviousTriggerValue(0)) {
+      if (PROTECT && !PreviousTriggerValue(0)) {
         TakenTransition(0) = FSM_TRANSITION_S1OPENLOOP_1;
         fsm_state_S9Error_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S9ERROR;
-      } else if (!PWM_OFF && PreviousTriggerValue(1)) {
+      } else if (!PLL_OFF && PreviousTriggerValue(1)) {
         TakenTransition(0) = FSM_TRANSITION_S1OPENLOOP_2;
         fsm_state_S0Idle_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S0IDLE;
@@ -199,18 +230,21 @@ void LaunchPad_0_fsm_output(const struct FSM_Struct *fsm_struct)
         TakenTransition(0) = FSM_TRANSITION_S1OPENLOOP_3;
         fsm_state_S2OpenLoopConnect_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S2OPENLOOPCONNECT;
+      } else {
+        fsm_state_S1OpenLoop_DuringAction(fsm_struct);
       }
       break;
 
      case FSM_STATE_S9ERROR:
+      fsm_state_S9Error_DuringAction(fsm_struct);
       break;
 
      case FSM_STATE_S2OPENLOOPCONNECT:
-      if (Error && !PreviousTriggerValue(0)) {
+      if (PROTECT && !PreviousTriggerValue(0)) {
         TakenTransition(0) = FSM_TRANSITION_S2OPENLOOPCONNECT_1;
         fsm_state_S9Error_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S9ERROR;
-      } else if (!PWM_OFF && PreviousTriggerValue(1)) {
+      } else if (!PLL_OFF && PreviousTriggerValue(1)) {
         TakenTransition(0) = FSM_TRANSITION_S2OPENLOOPCONNECT_2;
         fsm_state_S0Idle_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S0IDLE;
@@ -218,15 +252,17 @@ void LaunchPad_0_fsm_output(const struct FSM_Struct *fsm_struct)
         TakenTransition(0) = FSM_TRANSITION_S2OPENLOOPCONNECT_3;
         fsm_state_S3ACC_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S3ACC;
+      } else {
+        fsm_state_S2OpenLoopConnect_DuringAction(fsm_struct);
       }
       break;
 
      case FSM_STATE_S3ACC:
-      if (Error && !PreviousTriggerValue(0)) {
+      if (PROTECT && !PreviousTriggerValue(0)) {
         TakenTransition(0) = FSM_TRANSITION_S3ACC_1;
         fsm_state_S9Error_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S9ERROR;
-      } else if (!PWM_OFF && PreviousTriggerValue(1)) {
+      } else if (!PLL_OFF && PreviousTriggerValue(1)) {
         TakenTransition(0) = FSM_TRANSITION_S3ACC_2;
         fsm_state_S0Idle_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S0IDLE;
@@ -234,6 +270,8 @@ void LaunchPad_0_fsm_output(const struct FSM_Struct *fsm_struct)
         TakenTransition(0) = FSM_TRANSITION_S3ACC_3;
         fsm_state_S2OpenLoopConnect_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S2OPENLOOPCONNECT;
+      } else {
+        fsm_state_S3ACC_DuringAction(fsm_struct);
       }
       break;
 
@@ -247,26 +285,25 @@ void LaunchPad_0_fsm_output(const struct FSM_Struct *fsm_struct)
     switch ((int)CurrentState)
     {
      case FSM_STATE_S0IDLE:
-      PreviousTriggerValue(0) = (Error);
-      PreviousTriggerValue(1) = (PWM_ON);
+      PreviousTriggerValue(0) = (PLL_ON);
       break;
 
      case FSM_STATE_S1OPENLOOP:
-      PreviousTriggerValue(0) = (Error);
-      PreviousTriggerValue(1) = (PWM_OFF);
+      PreviousTriggerValue(0) = (PROTECT);
+      PreviousTriggerValue(1) = (PLL_OFF);
       PreviousTriggerValue(2) = (AfterTriggerTimestamp(0) <= 0);
       fsm_numActiveAfterTriggers = 1;
       break;
 
      case FSM_STATE_S2OPENLOOPCONNECT:
-      PreviousTriggerValue(0) = (Error);
-      PreviousTriggerValue(1) = (PWM_OFF);
+      PreviousTriggerValue(0) = (PROTECT);
+      PreviousTriggerValue(1) = (PLL_OFF);
       PreviousTriggerValue(2) = (ACC_ON);
       break;
 
      case FSM_STATE_S3ACC:
-      PreviousTriggerValue(0) = (Error);
-      PreviousTriggerValue(1) = (PWM_OFF);
+      PreviousTriggerValue(0) = (PROTECT);
+      PreviousTriggerValue(1) = (PLL_OFF);
       PreviousTriggerValue(2) = (ACC_OFF);
       break;
 

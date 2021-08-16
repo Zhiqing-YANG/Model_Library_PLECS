@@ -22,6 +22,6 @@ Inv.Filter.R2 = 0;                % [Ohm] parasite resistance in L2
 
 %% Operating Point
 Inv.OP.V_init = 0;                % [V] dc-link init voltage
-Inv.OP.V_dc = 180;                % [V] operating condition dc voltage   
+Inv.OP.V_dc = 200;                % [V] operating condition dc voltage   
 
 end

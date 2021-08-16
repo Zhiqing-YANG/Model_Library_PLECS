@@ -1,7 +1,7 @@
 /*
  * State machine file for: LaunchPad/State Machine
  * Generated with    : PLECS 4.4.5
- * Generated on      : 13 Aug 2021 14:49:06
+ * Generated on      : 16 Aug 2021 12:45:08
  */
 
 typedef double real_t;
@@ -63,7 +63,7 @@ enum FSM_Transition
 #define PLL_OFF                        (*fsm_struct->fsm_inputs[1][0])
 #define DVC_ON                         (*fsm_struct->fsm_inputs[2][0])
 #define DVC_OFF                        (*fsm_struct->fsm_inputs[3][0])
-#define Error                          (*fsm_struct->fsm_inputs[4][0])
+#define PROTECT                        (*fsm_struct->fsm_inputs[4][0])
 
 /* output variables */
 #define State                          (*fsm_struct->fsm_outputs[0][0])
@@ -72,6 +72,8 @@ enum FSM_Transition
 #define UNITS2                         (*fsm_struct->fsm_outputs[3][0])
 #define UNITS3                         (*fsm_struct->fsm_outputs[4][0])
 #define SW_Grid                        (*fsm_struct->fsm_outputs[5][0])
+#define EN_PWM                         (*fsm_struct->fsm_outputs[6][0])
+#define ERROR                          (*fsm_struct->fsm_outputs[7][0])
 
 static void fsm_state_S0Idle_EnterAction(const struct FSM_Struct* fsm_struct)
 {
@@ -80,7 +82,6 @@ static void fsm_state_S0Idle_EnterAction(const struct FSM_Struct* fsm_struct)
   UNITS1 = 0;
   UNITS2 = 0;
   UNITS3 = 0;
-  SW_Grid = 1;
 }
 
 static void fsm_state_S1PLL_EnterAction(const struct FSM_Struct* fsm_struct)
@@ -90,7 +91,6 @@ static void fsm_state_S1PLL_EnterAction(const struct FSM_Struct* fsm_struct)
   UNITS1 = 0;
   UNITS2 = 0;
   UNITS3 = 0;
-  SW_Grid = 1;
 }
 
 static void fsm_state_S9Error_EnterAction(const struct FSM_Struct* fsm_struct)
@@ -100,7 +100,6 @@ static void fsm_state_S9Error_EnterAction(const struct FSM_Struct* fsm_struct)
   UNITS1 = 0;
   UNITS2 = 0;
   UNITS3 = 1;
-  SW_Grid = 0;
 }
 
 static void fsm_state_S3DVC_EnterAction(const struct FSM_Struct* fsm_struct)
@@ -110,7 +109,34 @@ static void fsm_state_S3DVC_EnterAction(const struct FSM_Struct* fsm_struct)
   UNITS1 = 1;
   UNITS2 = 0;
   UNITS3 = 0;
+}
+
+static void fsm_state_S0Idle_DuringAction(const struct FSM_Struct* fsm_struct)
+{
   SW_Grid = 1;
+  EN_PWM = 0;
+  ERROR = 0;
+}
+
+static void fsm_state_S1PLL_DuringAction(const struct FSM_Struct* fsm_struct)
+{
+  SW_Grid = 1;
+  EN_PWM = 0;
+  ERROR = 0;
+}
+
+static void fsm_state_S9Error_DuringAction(const struct FSM_Struct* fsm_struct)
+{
+  SW_Grid = 1;
+  EN_PWM = 0;
+  ERROR = 1;
+}
+
+static void fsm_state_S3DVC_DuringAction(const struct FSM_Struct* fsm_struct)
+{
+  SW_Grid = 1;
+  EN_PWM = 1;
+  ERROR = 0;
 }
 
 void LaunchPad_0_fsm_start(const struct FSM_Struct *fsm_struct)
@@ -141,11 +167,13 @@ void LaunchPad_0_fsm_output(const struct FSM_Struct *fsm_struct)
         TakenTransition(0) = FSM_TRANSITION_S0IDLE_1;
         fsm_state_S1PLL_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S1PLL;
+      } else {
+        fsm_state_S0Idle_DuringAction(fsm_struct);
       }
       break;
 
      case FSM_STATE_S1PLL:
-      if (Error && !PreviousTriggerValue(0)) {
+      if (PROTECT && !PreviousTriggerValue(0)) {
         TakenTransition(0) = FSM_TRANSITION_S1PLL_1;
         fsm_state_S9Error_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S9ERROR;
@@ -157,14 +185,17 @@ void LaunchPad_0_fsm_output(const struct FSM_Struct *fsm_struct)
         TakenTransition(0) = FSM_TRANSITION_S1PLL_3;
         fsm_state_S3DVC_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S3DVC;
+      } else {
+        fsm_state_S1PLL_DuringAction(fsm_struct);
       }
       break;
 
      case FSM_STATE_S9ERROR:
+      fsm_state_S9Error_DuringAction(fsm_struct);
       break;
 
      case FSM_STATE_S3DVC:
-      if (Error && !PreviousTriggerValue(0)) {
+      if (PROTECT && !PreviousTriggerValue(0)) {
         TakenTransition(0) = FSM_TRANSITION_S3DVC_1;
         fsm_state_S9Error_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S9ERROR;
@@ -172,6 +203,8 @@ void LaunchPad_0_fsm_output(const struct FSM_Struct *fsm_struct)
         TakenTransition(0) = FSM_TRANSITION_S3DVC_2;
         fsm_state_S1PLL_EnterAction(fsm_struct);
         CurrentState = FSM_STATE_S1PLL;
+      } else {
+        fsm_state_S3DVC_DuringAction(fsm_struct);
       }
       break;
 
@@ -189,13 +222,13 @@ void LaunchPad_0_fsm_output(const struct FSM_Struct *fsm_struct)
       break;
 
      case FSM_STATE_S1PLL:
-      PreviousTriggerValue(0) = (Error);
+      PreviousTriggerValue(0) = (PROTECT);
       PreviousTriggerValue(1) = (PLL_OFF);
       PreviousTriggerValue(2) = (DVC_ON);
       break;
 
      case FSM_STATE_S3DVC:
-      PreviousTriggerValue(0) = (Error);
+      PreviousTriggerValue(0) = (PROTECT);
       PreviousTriggerValue(1) = (DVC_OFF);
       break;
 

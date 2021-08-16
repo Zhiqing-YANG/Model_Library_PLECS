@@ -1,7 +1,7 @@
 /*
  * State machine file for: LaunchPad/State Machine
  * Generated with    : PLECS 4.4.5
- * Generated on      : 14 Aug 2021 11:21:10
+ * Generated on      : 16 Aug 2021 12:23:51
  */
 
 typedef double real_t;
@@ -67,6 +67,7 @@ enum FSM_Transition
 #define UNITS3                         (*fsm_struct->fsm_outputs[4][0])
 #define SW_Grid                        (*fsm_struct->fsm_outputs[5][0])
 #define EN_PWM                         (*fsm_struct->fsm_outputs[6][0])
+#define ERROR                          (*fsm_struct->fsm_outputs[7][0])
 
 static void fsm_state_S0Idle_EnterAction(const struct FSM_Struct* fsm_struct)
 {
@@ -97,20 +98,23 @@ static void fsm_state_S9Error_EnterAction(const struct FSM_Struct* fsm_struct)
 
 static void fsm_state_S0Idle_DuringAction(const struct FSM_Struct* fsm_struct)
 {
-  SW_Grid = 0;
+  SW_Grid = 1;
   EN_PWM = 0;
+  ERROR = 0;
 }
 
 static void fsm_state_S1AVC_DuringAction(const struct FSM_Struct* fsm_struct)
 {
-  SW_Grid = 0;
+  SW_Grid = 1;
   EN_PWM = 1;
+  ERROR = 0;
 }
 
 static void fsm_state_S9Error_DuringAction(const struct FSM_Struct* fsm_struct)
 {
-  SW_Grid = 0;
+  SW_Grid = 1;
   EN_PWM = 0;
+  ERROR = 1;
 }
 
 void LaunchPad_0_fsm_start(const struct FSM_Struct *fsm_struct)

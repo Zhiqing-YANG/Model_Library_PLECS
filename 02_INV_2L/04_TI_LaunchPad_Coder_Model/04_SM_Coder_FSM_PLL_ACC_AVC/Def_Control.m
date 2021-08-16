@@ -40,8 +40,8 @@ Ctrl.AVC.SatLim = 30;               % [] Anti-windup of AVC
 Ctrl.Calib = Sensor;
 
 %% Protection
-Ctrl.Limit.V_ac = 180;
-Ctrl.Limit.I_ac = 20;
-Ctrl.Limit.V_dc = 250;
+Ctrl.Limit.V_ac = 200;
+Ctrl.Limit.I_ac = 25;
+Ctrl.Limit.V_dc = 300;
 
 end

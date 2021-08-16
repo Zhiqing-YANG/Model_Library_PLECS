@@ -2,7 +2,7 @@
  * Implementation file for: SM_Coder_FSM_PLL_ACC_AVC/ Three-Phase 2L Grid-Tied  Inverter/LaunchPad
  * Generated with         : PLECS 4.4.5
  *                          TI2837xS 1.2
- * Generated on           : 14 Aug 2021 11:21:10
+ * Generated on           : 16 Aug 2021 12:23:51
  */
 
 #include "LaunchPad.h"
@@ -67,7 +67,6 @@ struct FSM_Struct {
 
 static struct FSM_Struct LaunchPad_fsm_struct[1];
 static const double LaunchPad_UNCONNECTED = 0;
-static double LaunchPad_D_double[1];
 static uint32_t LaunchPad_D_uint32_t[1];
 static double LaunchPad_deriv[6] _ALIGN;
 void LaunchPad_0_fsm_start(const struct FSM_Struct *fsm_struct);
@@ -79,7 +78,7 @@ LaunchPad_ModelStates LaunchPad_X _ALIGN;
 const char * LaunchPad_errorStatus;
 const double LaunchPad_sampleTime = 5.00000000000000024e-05;
 const char * const LaunchPad_checksum =
-  "08a8f8b52efd98581c6f2981fb173e2c21c6faa9";
+  "08adcdf5d5721d220c7c537d950ad20b7e1e5831";
 
 /* Target declarations */
 static DIO_Obj_t DoutDrvEnableObj;
@@ -439,7 +438,7 @@ void LaunchPad_initialize(double time)
   /* Initialization for State Machine : 'LaunchPad/State Machine' */
   {
     static const double* fsm_inputPtrs[] = { &LaunchPad_B.SW_1,
-      &LaunchPad_B.SW_1, &LaunchPad_D_double[0] };
+      &LaunchPad_B.SW_1, &LaunchPad_UNCONNECTED };
 
     static const double** fsm_inputs[] = { &fsm_inputPtrs[0], &fsm_inputPtrs[1],
       &fsm_inputPtrs[2] };
@@ -447,11 +446,12 @@ void LaunchPad_initialize(double time)
     static double* fsm_outputPtrs[] = { &LaunchPad_B.StateMachine[0],
       &LaunchPad_B.StateMachine[1], &LaunchPad_B.StateMachine[2],
       &LaunchPad_B.StateMachine[3], &LaunchPad_B.StateMachine[4],
-      &LaunchPad_B.StateMachine[5], &LaunchPad_B.StateMachine[6] };
+      &LaunchPad_B.StateMachine[5], &LaunchPad_B.StateMachine[6],
+      &LaunchPad_B.StateMachine[7] };
 
     static double** fsm_outputs[] = { &fsm_outputPtrs[0], &fsm_outputPtrs[1],
       &fsm_outputPtrs[2], &fsm_outputPtrs[3], &fsm_outputPtrs[4],
-      &fsm_outputPtrs[5], &fsm_outputPtrs[6] };
+      &fsm_outputPtrs[5], &fsm_outputPtrs[6], &fsm_outputPtrs[7] };
 
     static int fsm_takenTransitions[1];
     static double fsm_nextSampleHit;
@@ -525,8 +525,8 @@ void LaunchPad_step()
    *  ADC : 'LaunchPad/ADC C'
    */
   LaunchPad_B.Saturation = 50.*(HAL_getAnalogInF(0, 0));
-  if (LaunchPad_B.Saturation > 180.) {
-    LaunchPad_B.Saturation = 180.;
+  if (LaunchPad_B.Saturation > 200.) {
+    LaunchPad_B.Saturation = 200.;
   } else if (LaunchPad_B.Saturation < 0.) {
     LaunchPad_B.Saturation = 0.;
   }
@@ -787,19 +787,15 @@ void LaunchPad_step()
   LaunchPad_B.dq_beta = (LaunchPad_B.Sum9 * LaunchPad_B.Sin_3) +
     (LaunchPad_B.Sum10 * LaunchPad_B.Cos_3);
 
-  /* Function : 'LaunchPad/ADC Decode/Calibration V_dc/Fcn'
-   * incorporates
-   *  Function : 'LaunchPad/ADC Decode/Calibration V_dc/Fcn1'
-   *  ADC : 'LaunchPad/ADC A'
-   */
-  LaunchPad_B.Fcn_2 = ((((HAL_getAnalogInF(2, 0)) - 0.) / 0.709999999999999964)
-                       - 0.) / 0.00300000000000000006;
-
   /* Saturation : 'LaunchPad/Controller/Modulator/Saturation1'
    * incorporates
    *  Gain : 'LaunchPad/Controller/Modulator/Gain1'
+   *  Function : 'LaunchPad/ADC Decode/Calibration V_dc/Fcn'
+   *  Function : 'LaunchPad/ADC Decode/Calibration V_dc/Fcn1'
+   *  ADC : 'LaunchPad/ADC A'
    */
-  LaunchPad_B.Saturation1 = 0.5*LaunchPad_B.Fcn_2;
+  LaunchPad_B.Saturation1 = 0.5*(((((HAL_getAnalogInF(2, 0)) - 0.) /
+    0.709999999999999964) - 0.) / 0.00300000000000000006);
   if (LaunchPad_B.Saturation1 < 1.) {
     LaunchPad_B.Saturation1 = 1.;
   }
@@ -856,32 +852,7 @@ void LaunchPad_step()
   HAL_setPwmDuty(2, LaunchPad_B.Switch_1 ? LaunchPad_B.Delay[2] :
                  LaunchPad_B.Sum_2[2]);
 
-  /* Logical Operator : 'LaunchPad/Protection/Logical\nOperator5'
-   * incorporates
-   *  Logical Operator : 'LaunchPad/Protection/Logical\nOperator'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant'
-   *  Abs : 'LaunchPad/Protection/Abs'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant1'
-   *  Abs : 'LaunchPad/Protection/Abs1'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant2'
-   *  Abs : 'LaunchPad/Protection/Abs2'
-   *  Logical Operator : 'LaunchPad/Protection/Logical\nOperator4'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant3'
-   *  Abs : 'LaunchPad/Protection/Abs3'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant4'
-   *  Abs : 'LaunchPad/Protection/Abs4'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant5'
-   *  Abs : 'LaunchPad/Protection/Abs5'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant6'
-   *  Abs : 'LaunchPad/Protection/Abs6'
-   */
-  LaunchPad_B.LogicalOperator5 = ((fabs(LaunchPad_B.Fcn) >= 180.) || (fabs
-    (LaunchPad_B.Fcn1) >= 180.) || (fabs(LaunchPad_B.Fcn2) >= 180.)) || ((fabs
-    (LaunchPad_B.Fcn_1) >= 20.) || (fabs(LaunchPad_B.Fcn1_1) >= 20.) || (fabs
-    (LaunchPad_B.Fcn2_1) >= 20.)) || (fabs(LaunchPad_B.Fcn_2) >= 250.);
-
   /* State Machine : 'LaunchPad/State Machine' */
-  LaunchPad_D_double[0] = LaunchPad_B.LogicalOperator5;
   LaunchPad_0_fsm_output(&LaunchPad_fsm_struct[0]);
   if (*LaunchPad_fsm_struct[0].fsm_errorStatus)
     LaunchPad_errorStatus = *LaunchPad_fsm_struct[0].fsm_errorStatus;
@@ -913,10 +884,10 @@ void LaunchPad_step()
   HAL_setDigitalOut(4, LaunchPad_B.StateMachine[5]);
 
   /* Digital Out : 'LaunchPad/LED Red' */
-  HAL_setDigitalOut(5, LaunchPad_B.LogicalOperator5);
+  HAL_setDigitalOut(5, !LaunchPad_B.StateMachine[7]);
 
   /* Digital Out : 'LaunchPad/LED Blue' */
-  HAL_setDigitalOut(6, LaunchPad_B.StateMachine[6]);
+  HAL_setDigitalOut(6, !LaunchPad_B.StateMachine[6]);
 
   /* Gain : 'LaunchPad/Controller/Alternating-Voltage Control/d-axis\nPI Regulator/Gain2' */
   LaunchPad_B.Gain2 = 300.*LaunchPad_B.Sum;

@@ -45,8 +45,8 @@ Ctrl.DVC.SatLim = 20;              % [] Saturation limit of integrator
 Ctrl.Calib = Sensor;
 
 %% Protection
-Ctrl.Limit.V_ac = 180;
-Ctrl.Limit.I_ac = 20;
-Ctrl.Limit.V_dc = 250;
+Ctrl.Limit.V_ac = 200;
+Ctrl.Limit.I_ac = 25;
+Ctrl.Limit.V_dc = 300;
 
 end

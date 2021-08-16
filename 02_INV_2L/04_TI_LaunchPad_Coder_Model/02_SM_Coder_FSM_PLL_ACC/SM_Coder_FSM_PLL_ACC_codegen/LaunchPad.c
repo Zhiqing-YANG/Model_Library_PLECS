@@ -2,7 +2,7 @@
  * Implementation file for: SM_Coder_FSM_PLL_ACC/ Three-Phase 2L Grid-Tied  Inverter/LaunchPad
  * Generated with         : PLECS 4.4.5
  *                          TI2837xS 1.2
- * Generated on           : 13 Aug 2021 14:43:01
+ * Generated on           : 16 Aug 2021 12:33:33
  */
 
 #include "LaunchPad.h"
@@ -78,7 +78,7 @@ LaunchPad_ModelStates LaunchPad_X _ALIGN;
 const char * LaunchPad_errorStatus;
 const double LaunchPad_sampleTime = 5.00000000000000024e-05;
 const char * const LaunchPad_checksum =
-  "8ce82c6b03d56b2a70c8ff56e38d0d13d02ceb5e";
+  "ad89deeda55307d729aa1607ffb11c2fe444518c";
 
 /* Target declarations */
 static DIO_Obj_t DoutDrvEnableObj;
@@ -443,11 +443,12 @@ void LaunchPad_initialize(double time)
     static double* fsm_outputPtrs[] = { &LaunchPad_B.StateMachine[0],
       &LaunchPad_B.StateMachine[1], &LaunchPad_B.StateMachine[2],
       &LaunchPad_B.StateMachine[3], &LaunchPad_B.StateMachine[4],
-      &LaunchPad_B.StateMachine[5] };
+      &LaunchPad_B.StateMachine[5], &LaunchPad_B.StateMachine[6],
+      &LaunchPad_B.StateMachine[7] };
 
     static double** fsm_outputs[] = { &fsm_outputPtrs[0], &fsm_outputPtrs[1],
       &fsm_outputPtrs[2], &fsm_outputPtrs[3], &fsm_outputPtrs[4],
-      &fsm_outputPtrs[5] };
+      &fsm_outputPtrs[5], &fsm_outputPtrs[6], &fsm_outputPtrs[7] };
 
     static int fsm_takenTransitions[1];
     static double fsm_nextSampleHit;
@@ -554,8 +555,8 @@ void LaunchPad_step()
    *  ADC : 'LaunchPad/ADC C'
    */
   LaunchPad_B.Saturation = 6.*(HAL_getAnalogInF(1, 0));
-  if (LaunchPad_B.Saturation > 20.) {
-    LaunchPad_B.Saturation = 20.;
+  if (LaunchPad_B.Saturation > 25.) {
+    LaunchPad_B.Saturation = 25.;
   } else if (LaunchPad_B.Saturation < 0.) {
     LaunchPad_B.Saturation = 0.;
   }
@@ -725,7 +726,7 @@ void LaunchPad_step()
    *  Constant : 'LaunchPad/Controller/Modulator/m_ref_d'
    *  Constant : 'LaunchPad/Controller/Modulator/m_ref_q'
    */
-  LaunchPad_B.dq_a = (0.785674201318386167 * LaunchPad_B.Cos_3) - (0. *
+  LaunchPad_B.dq_a = (0.905096679918780733 * LaunchPad_B.Cos_3) - (0. *
     LaunchPad_B.Sin_3);
 
   /* Function : 'LaunchPad/Controller/Modulator/RRF->3ph/dq->b'
@@ -733,7 +734,7 @@ void LaunchPad_step()
    *  Constant : 'LaunchPad/Controller/Modulator/m_ref_d'
    *  Constant : 'LaunchPad/Controller/Modulator/m_ref_q'
    */
-  LaunchPad_B.dq_b = (0.785674201318386167 * ((-0.5 * LaunchPad_B.Cos_3) +
+  LaunchPad_B.dq_b = (0.905096679918780733 * ((-0.5 * LaunchPad_B.Cos_3) +
     (0.866025403784438597 * LaunchPad_B.Sin_3))) + (0. * ((0.5 *
     LaunchPad_B.Sin_3) + (0.866025403784438597 * LaunchPad_B.Cos_3)));
 
@@ -821,32 +822,11 @@ void LaunchPad_step()
   LaunchPad_B.Fcn2_1 = ((((HAL_getAnalogInF(1, 3)) - 0.00400000000000000008) /
     1.) - 1.49700000000000011) / 0.00545113636363636286;
 
-  /* Logical Operator : 'LaunchPad/Protection/Logical\nOperator5'
-   * incorporates
-   *  Logical Operator : 'LaunchPad/Protection/Logical\nOperator'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant'
-   *  Abs : 'LaunchPad/Protection/Abs'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant1'
-   *  Abs : 'LaunchPad/Protection/Abs1'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant2'
-   *  Abs : 'LaunchPad/Protection/Abs2'
-   *  Logical Operator : 'LaunchPad/Protection/Logical\nOperator4'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant3'
-   *  Abs : 'LaunchPad/Protection/Abs3'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant4'
-   *  Abs : 'LaunchPad/Protection/Abs4'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant5'
-   *  Abs : 'LaunchPad/Protection/Abs5'
-   *  Compare to Constant : 'LaunchPad/Protection/Compare to\nConstant6'
-   *  Abs : 'LaunchPad/Protection/Abs6'
-   */
-  LaunchPad_B.LogicalOperator5 = ((fabs(LaunchPad_B.Fcn_2) >= 180.) || (fabs
-    (LaunchPad_B.Fcn1_1) >= 180.) || (fabs(LaunchPad_B.Fcn2_1) >= 180.)) ||
-    ((fabs(LaunchPad_B.Fcn) >= 20.) || (fabs(LaunchPad_B.Fcn1) >= 20.) || (fabs
-      (LaunchPad_B.Fcn2) >= 20.)) || (fabs(LaunchPad_B.Fcn_1) >= 250.);
-
   /* State Machine : 'LaunchPad/State Machine' */
-  LaunchPad_D_double[0] = LaunchPad_B.LogicalOperator5;
+  LaunchPad_D_double[0] = ((fabs(LaunchPad_B.Fcn_2) >= 200.) || (fabs
+    (LaunchPad_B.Fcn1_1) >= 200.) || (fabs(LaunchPad_B.Fcn2_1) >= 200.)) ||
+    ((fabs(LaunchPad_B.Fcn) >= 25.) || (fabs(LaunchPad_B.Fcn1) >= 25.) || (fabs
+      (LaunchPad_B.Fcn2) >= 25.)) || (fabs(LaunchPad_B.Fcn_1) >= 300.);
   LaunchPad_0_fsm_output(&LaunchPad_fsm_struct[0]);
   if (*LaunchPad_fsm_struct[0].fsm_errorStatus)
     LaunchPad_errorStatus = *LaunchPad_fsm_struct[0].fsm_errorStatus;
@@ -865,7 +845,7 @@ void LaunchPad_step()
 
   /* Powerstage Protection : 'LaunchPad/Powerstage' */
   {
-    if ((!LaunchPad_B.LogicalOperator5) && LaunchPad_B.SW_1 > 0) {
+    if (LaunchPad_B.StateMachine[6] > 0) {
       HAL_enablePower(true);
     } else {
       HAL_enablePower(false);
@@ -878,10 +858,10 @@ void LaunchPad_step()
   HAL_setDigitalOut(4, LaunchPad_B.StateMachine[5]);
 
   /* Digital Out : 'LaunchPad/LED Red' */
-  HAL_setDigitalOut(5, LaunchPad_B.LogicalOperator5);
+  HAL_setDigitalOut(5, !LaunchPad_B.StateMachine[7]);
 
   /* Digital Out : 'LaunchPad/LED Blue' */
-  HAL_setDigitalOut(6, LaunchPad_B.SW_1);
+  HAL_setDigitalOut(6, !LaunchPad_B.StateMachine[6]);
 
   /* Trigonometric Function : 'LaunchPad/Controller/Phase-Locked Loop/3ph->RRF/Sin' */
   LaunchPad_B.Sin_4 = sin(LaunchPad_B.Integrator_i1);
