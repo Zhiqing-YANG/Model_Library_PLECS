@@ -13,11 +13,12 @@ Color = Def_Color();
 % frequency range
 fi=0;
 ff=4;
-n_sample=1000;
+n_sample=3000;
 f_swp = logspace(fi,ff,n_sample);
 
 % change system parameters
 Grid.Lg = 50e-6;
+Inv.OP.I_pv = -1000;
 
 % case 1
 Ctrl.DVC.Kp  = -24;
