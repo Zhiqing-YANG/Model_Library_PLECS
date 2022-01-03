@@ -11,7 +11,7 @@
 % Establishment: 15.01.2021 Jiani He, PGS, RWTH Aachen
 % ########################################################################
 
-function [Z_inv, Y_inv, Z_pcc, Y_pcc, Z_g, Y_g] = IM_INV_2L_ACC_PLL_DVC_VDC(Grid,Inv,Ctrl,f_swp)
+function [Z_inv, Y_inv, Z_pcc, Y_pcc, Z_g, Y_g] = IM_INV_2L_ACC_PLL(Grid,Inv,Ctrl,f_swp)
 Z_inv.dd = [];
 Z_inv.dq = [];
 Z_inv.qd = [];
@@ -44,7 +44,7 @@ Y_g.qq = [];
 
 w_swp = 2*pi*f_swp;
 for w = w_swp
-    [Z_inv_w, Y_inv_w, Z_pcc_w, Y_pcc_w, Z_g_w, Y_g_w] = IM_INV_2L_ACC_PLL_DVC_VDC_w(Grid,Inv,Ctrl,w);
+    [Z_inv_w, Y_inv_w, Z_pcc_w, Y_pcc_w, Z_g_w, Y_g_w] = IM_INV_2L_ACC_PLL_w(Grid,Inv,Ctrl,w);
     Z_inv.dd = [Z_inv.dd, Z_inv_w(1,1)];
     Z_inv.dq = [Z_inv.dq, Z_inv_w(1,2)];
     Z_inv.qd = [Z_inv.qd, Z_inv_w(2,1)];

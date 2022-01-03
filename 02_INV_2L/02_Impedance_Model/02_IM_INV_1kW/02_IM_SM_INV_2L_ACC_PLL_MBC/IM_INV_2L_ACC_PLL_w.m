@@ -17,7 +17,7 @@
 % Establishment: 18.03.2019, Zhiqing Yang, PGS, RWTH Aachen
 % ########################################################################
 
-function [Z_inv_w, Y_inv_w, Z_pcc_w, Y_pcc_w, Z_g_w, Y_g_w] = IM_INV_2L_ACC_PLL_MBC_w(Grid,Inv,Ctrl,w)
+function [Z_inv_w, Y_inv_w, Z_pcc_w, Y_pcc_w, Z_g_w, Y_g_w] = IM_INV_2L_ACC_PLL_w(Grid,Inv,Ctrl,w)
 %% Calculation of the Steady-State Values
 Inv.OP.I_L1_d = Ctrl.I_ref_d;
 Inv.OP.I_L1_q = 0;

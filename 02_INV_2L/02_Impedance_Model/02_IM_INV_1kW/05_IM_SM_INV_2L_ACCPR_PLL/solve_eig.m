@@ -28,7 +28,7 @@ a_old = 0;
 
 for f = f_swp
     w = 2*pi*f;
-    [Z_inv_w,Y_inv_w,Z_pcc_w,Y_pcc_w,Z_g_w,Y_g_w] = IM_INV_2L_ACC_PLL_DVC_w(Grid,Inv,Ctrl,w);
+    [Z_inv_w,Y_inv_w,Z_pcc_w,Y_pcc_w,Z_g_w,Y_g_w] = IM_INV_2L_ACC_PLL_w(Grid,Inv,Ctrl,w);
     L_w = Y_pcc_w*Z_g_w;
 
     % find eigenvalues of the impedance ratio
