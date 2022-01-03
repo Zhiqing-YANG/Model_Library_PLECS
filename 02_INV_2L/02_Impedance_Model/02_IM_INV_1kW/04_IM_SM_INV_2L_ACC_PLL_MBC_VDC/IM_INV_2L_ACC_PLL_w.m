@@ -11,7 +11,6 @@
 % Consider:
 %       - ACC
 %       - PLL
-%       - DVC
 %       - AD
 %       - VFF
 %       - MBC
@@ -19,9 +18,10 @@
 % Establishment: 18.03.2019, Zhiqing Yang, PGS, RWTH Aachen
 % ########################################################################
 
-function [Z_inv_w, Y_inv_w, Z_pcc_w, Y_pcc_w, Z_g_w, Y_g_w] = IM_INV_2L_ACC_PLL_DVC_w(Grid,Inv,Ctrl,w)
+function [Z_inv_w, Y_inv_w, Z_pcc_w, Y_pcc_w, Z_g_w, Y_g_w] = IM_INV_2L_ACC_PLL_w(Grid,Inv,Ctrl,w)
+
 %% Calculation of the Steady-State Values
-Inv.OP.I_L1_d = Inv.OP.V_dc*Inv.OP.I_pv/(1.5*Grid.V_amp);
+Inv.OP.I_L1_d = Ctrl.I_ref_d;
 Inv.OP.I_L1_q = 0;
 Inv.OP.V_C_d = sqrt((Grid.V_amp+Inv.OP.I_L1_d*(Inv.Filter.R2+Grid.Rg))^2+(Inv.OP.I_L1_d*Grid.wg*(Inv.Filter.L2+Grid.Lg))^2);
 Inv.OP.V_C_q = 0;
@@ -42,7 +42,6 @@ I = eye(2);
 Z_L1 = [(1i*w)*Inv.Filter.L1+Inv.Filter.R1, -Grid.wg*Inv.Filter.L1; Grid.wg*Inv.Filter.L1, (1i*w)*Inv.Filter.L1+Inv.Filter.R1];      
 Y_C = [(1i*w)*Inv.Filter.C, -Grid.wg*Inv.Filter.C; Grid.wg*Inv.Filter.C, (1i*w)*Inv.Filter.C];                 
 Z_L2 = [(1i*w)*Inv.Filter.L2+Inv.Filter.R2, -Grid.wg*Inv.Filter.L2; Grid.wg*Inv.Filter.L2, (1i*w)*Inv.Filter.L2+Inv.Filter.R2];      
-Y_dc = (1i*w)*Inv.Filter.C_dc;                                  % admittance of dc-link capacitance
 Z_Rd = [Inv.Filter.Rd,0;0,Inv.Filter.Rd];
 
 % ACC
@@ -56,49 +55,39 @@ theta_pc = Ctrl.MBC.Kp*Ctrl.T_sp*Grid.wg;
 G_PC = [cos(theta_pc),-sin(theta_pc);sin(theta_pc),cos(theta_pc)];              % Phase correction
 G_ACC = G_PC*G_ACC;
 
-% delay and holder
-G_dh = [(2-Ctrl.T_dh*(1i*w))/(2+Ctrl.T_dh*(1i*w)),0;0,(2-Ctrl.T_dh*(1i*w))/(2+Ctrl.T_dh*(1i*w))];   % pade approximation
+% delay and hold
+% F_del = exp(-1i*(w)*Ctrl.Td_PWM);                           % delay function
+F_del = (2-Ctrl.Td_PWM*(1i*w))/(2+Ctrl.Td_PWM*(1i*w));        % delay function
+G_del = [F_del,0;0,F_del];                                    % delay matrix
 
 % PLL 
-H_PLL = Ctrl.PLL.Kp+Ctrl.PLL.Ki/(1i*w);                         % PI controller of PLL in dq frame
-G_PLL = H_PLL/((1i*w)+Inv.OP.V_C_d*H_PLL);                      % small-signal model of PLL
+F_PLL = Ctrl.PLL.Kp+Ctrl.PLL.Ki/(1i*w);             % PI controller of PLL in dq frame
+H_PLL = F_PLL/((1i*w)+Inv.OP.V_C_d*F_PLL);          % small-signal model of PLL
 
 % effect of PLL
-G_PLL_m = [0,-Inv.OP.M_q*G_PLL;0,Inv.OP.M_d*G_PLL];             % G_PLL_m
-G_PLL_i = [0,Inv.OP.I_L1_q*G_PLL;0,-Inv.OP.I_L1_d*G_PLL];       % G_PLL_i
-G_PLL_v = [1,Inv.OP.V_C_q*G_PLL;0,1-Inv.OP.V_C_d*G_PLL];        % G_PLL_v
-G_PLL_ic = [0,Inv.OP.I_C_q*G_PLL;0,-Inv.OP.I_C_d*G_PLL];        % G_PLL_ic
-
-% DVC   
-G_DVC = [Ctrl.DVC.Kp+Ctrl.DVC.Ki/(1i*w);0];                     % PI voltage controller in dq-axis
+G_PLL_m = [0,-Inv.OP.M_q*H_PLL;0,Inv.OP.M_d*H_PLL];             % G_PLL_m
+G_PLL_i = [0,Inv.OP.I_L1_q*H_PLL;0,-Inv.OP.I_L1_d*H_PLL];       % G_PLL_i
+G_PLL_v = [1,Inv.OP.V_C_q*H_PLL;0,1-Inv.OP.V_C_d*H_PLL];        % G_PLL_v
+G_PLL_ic = [0,Inv.OP.I_C_q*H_PLL;0,-Inv.OP.I_C_d*H_PLL];        % G_PLL_ic
 
 % virtual damping control
-H_damp_dd = Ctrl.VDC.Gdd.Kp+Ctrl.VDC.Gdd.Ki/(1i*w)+Ctrl.VDC.Gdd.Kd*Ctrl.VDC.w_LPF*(1i*w)/((1i*w)+Ctrl.VDC.w_LPF);   
-H_damp_qq = Ctrl.VDC.Gqq.Kp+Ctrl.VDC.Gqq.Ki/(1i*w)+Ctrl.VDC.Gqq.Kd*Ctrl.VDC.w_LPF*(1i*w)/((1i*w)+Ctrl.VDC.w_LPF);   
-H_damp_dq = 0;                           
-H_damp_qd = 0;     
-G_damp = [H_damp_dd,H_damp_dq;H_damp_qd,H_damp_qq];
-
-% effect of dc-link 
-G_vd = [3*Inv.OP.I_L1_d/(4*Y_dc),3*Inv.OP.I_L1_q/(4*Y_dc)];
-G_vi = [3*Inv.OP.M_d/(4*Y_dc),3*Inv.OP.M_q/(4*Y_dc)];
-G_M = [Inv.OP.M_d;Inv.OP.M_q];
-
-G_A = I*Inv.OP.V_dc/2-G_dh*G_ACC*G_DVC*G_vd-G_M/2*G_vd;
-G_B = G_dh*G_ACC*G_DVC*G_vi-G_dh*(G_ACC+G_dec)+G_M/2*G_vi; 
-G_C = G_PLL_m*Inv.OP.V_dc/2+G_dh*(G_VFF-G_ACC*G_damp)*G_PLL_v-G_dh*(G_ACC+G_dec)*G_PLL_i-G_dh*G_AD*(G_PLL_ic+Y_C);
+G_VDC_dd = Ctrl.VDC.Gdd.Kp+Ctrl.VDC.Gdd.Ki/(1i*w)+Ctrl.VDC.Gdd.Kd*Ctrl.VDC.w_LPF*(1i*w)/((1i*w)+Ctrl.VDC.w_LPF);   
+G_VDC_qq = Ctrl.VDC.Gqq.Kp+Ctrl.VDC.Gqq.Ki/(1i*w)+Ctrl.VDC.Gqq.Kd*Ctrl.VDC.w_LPF*(1i*w)/((1i*w)+Ctrl.VDC.w_LPF);   
+G_VDC_dq = 0;                           
+G_VDC_qd = 0;  
+G_VDC = [G_VDC_dd,G_VDC_dq;G_VDC_qd,G_VDC_qq];
 
 %% Impedance Model of Inverter 
 % impedance
-Z_inv_w = -(I-(Inv.OP.V_dc/2*I-G_M/2*G_vd)*inv(G_A)*G_C)\((Inv.OP.V_dc/2*I-G_M/2*G_vd)*inv(G_A)*G_B-G_M/2*G_vi-Z_L1);
-          
-% admittance 
+Z_inv_w = (I-Inv.OP.V_dc/2*G_PLL_m-G_del*((G_VFF-G_ACC*G_VDC)*G_PLL_v-(G_ACC+G_dec)*G_PLL_i-G_AD*(G_PLL_ic+Y_C)))\(G_del*(G_ACC+G_dec)+Z_L1);
+
+%admittance
 Y_inv_w = I/Z_inv_w;
 
 %% Impedance Model of Inverter with L2, C
 % impedance
-Z_pcc_w = inv(inv(Z_inv_w)+inv(inv(Y_C)+Z_Rd))+Z_L2; 
-          
+Z_pcc_w = inv(inv(Z_inv_w)+inv(inv(Y_C)+Z_Rd))+Z_L2 ;
+        
 % admittance 
 Y_pcc_w = I/Z_pcc_w;
 

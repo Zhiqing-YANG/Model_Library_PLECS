@@ -48,22 +48,24 @@ G_dec = [0,Grid.wg*Inv.Filter.L1;-Grid.wg*Inv.Filter.L1,0];                     
 G_AD = [Ctrl.ACC.K_AD,0;0,Ctrl.ACC.K_AD];                                       % active damping
 G_VFF = [Ctrl.ACC.K_VFF/((1i*w)+Ctrl.ACC.K_VFF),0;0,Ctrl.ACC.K_VFF/((1i*w)+Ctrl.ACC.K_VFF)]; 
 
-% delay and holder
-G_dh = [(2-Ctrl.T_dh*(1i*w))/(2+Ctrl.T_dh*(1i*w)),0;0,(2-Ctrl.T_dh*(1i*w))/(2+Ctrl.T_dh*(1i*w))];   % pade approximation
+% delay and hold
+% F_del = exp(-1i*(w)*Ctrl.Td_PWM);                           % delay function
+F_del = (2-Ctrl.Td_PWM*(1i*w))/(2+Ctrl.Td_PWM*(1i*w));        % delay function
+G_del = [F_del,0;0,F_del];                                    % delay matrix
 
 % PLL 
-H_PLL = Ctrl.PLL.Kp+Ctrl.PLL.Ki/(1i*w);                         % PI controller of PLL in dq frame
-G_PLL = H_PLL/((1i*w)+Inv.OP.V_C_d*H_PLL);                      % small-signal model of PLL
+F_PLL = Ctrl.PLL.Kp+Ctrl.PLL.Ki/(1i*w);             % PI controller of PLL in dq frame
+H_PLL = F_PLL/((1i*w)+Inv.OP.V_C_d*F_PLL);          % small-signal model of PLL
 
 % effect of PLL
-G_PLL_m = [0,-Inv.OP.M_q*G_PLL;0,Inv.OP.M_d*G_PLL];             % G_PLL_m
-G_PLL_i = [0,Inv.OP.I_L1_q*G_PLL;0,-Inv.OP.I_L1_d*G_PLL];       % G_PLL_i
-G_PLL_v = [1,Inv.OP.V_C_q*G_PLL;0,1-Inv.OP.V_C_d*G_PLL];        % G_PLL_v
-G_PLL_ic = [0,Inv.OP.I_C_q*G_PLL;0,-Inv.OP.I_C_d*G_PLL];        % G_PLL_ic
+G_PLL_m = [0,-Inv.OP.M_q*H_PLL;0,Inv.OP.M_d*H_PLL];             % G_PLL_m
+G_PLL_i = [0,Inv.OP.I_L1_q*H_PLL;0,-Inv.OP.I_L1_d*H_PLL];       % G_PLL_i
+G_PLL_v = [1,Inv.OP.V_C_q*H_PLL;0,1-Inv.OP.V_C_d*H_PLL];        % G_PLL_v
+G_PLL_ic = [0,Inv.OP.I_C_q*H_PLL;0,-Inv.OP.I_C_d*H_PLL];        % G_PLL_ic
 
 %% Impedance Model of Inverter 
 % impedance
-Z_inv_w = (I-Inv.OP.V_dc/2*G_PLL_m-G_dh*(G_VFF*G_PLL_v-(G_ACC+G_dec)*G_PLL_i-G_AD*(G_PLL_ic+Y_C)))\(G_dh*(G_ACC+G_dec)+Z_L1);
+Z_inv_w = (I-Inv.OP.V_dc/2*G_PLL_m-G_del*(G_VFF*G_PLL_v-(G_ACC+G_dec)*G_PLL_i-G_AD*(G_PLL_ic+Y_C)))\(G_del*(G_ACC+G_dec)+Z_L1);
 
 %admittance
 Y_inv_w = I/Z_inv_w;
