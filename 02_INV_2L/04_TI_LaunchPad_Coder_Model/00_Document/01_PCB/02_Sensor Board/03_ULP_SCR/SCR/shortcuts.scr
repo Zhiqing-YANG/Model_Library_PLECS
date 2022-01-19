@@ -1,0 +1,17 @@
+set Interface.PreferredUnit 2;  # set unit to mm
+
+assign A+f move;
+assign A+C+f RUN moveby.ulp
+assign A+C+d RUN yaalign.ulp
+assign A+d delete;
+assign A+s name;
+assign A+a info;
+assign A+q show;
+assign A+w route;
+assign A+e ripup;
+assign A+r rotate;
+assign A+g group;
+
+assign F1 GRID mm 1 lines on alt mm 0.1;
+assign F2 GRID mm 0.5 lines on alt mm 0.05;
+assign F3 Grid mm 0.1 lines on alt mm 0.01;

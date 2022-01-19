@@ -1,0 +1,176 @@
+#usage "<b>Data generation for Pick-and-Place mounting machines</b>\n"
+       "<p>"
+       "Generates files for automatic assembly machines with the coordinates"
+       "of SMD parts on the top and bottom layers of the board."
+       "The x and y coordinates of each SMD part are calculated "
+       "as mean of maximum and mimimum values of the SMD pin group center points. "
+       "The calculated value represents the physical center of the part and may "
+       "not be identical to the origin point of the part in the layout."
+       "<p>"
+       "The syntax of the output data looks like this:"
+       "<p>"
+       "<tt>name x-coord y-coord rotation value package</tt>"
+       "<p>"
+       "<author>Author: support@cadsoft.de</author><br>"
+       "Modified by THR-ENGINEERING"
+
+// THIS PROGRAM IS PROVIDED AS IS AND WITHOUT WARRANTY OF ANY KIND, EXPRESSED OR IMPLIED
+
+string Version = "0.2";
+
+int Layer;
+int fLayerTop = 1;  // Flag
+int fLayerBot = 0;  // Flag
+int Units     = 0;  // 0=mm, 1=Inch
+int Delim     = 0;  // 0=Space, 1=Tab
+
+
+void GenerateFile (int Layer)
+{
+  string FileName;
+  string FileExt;
+  string sLayer;
+  
+  if (Layer == 1)
+  {
+    FileExt = ".mnt";
+    sLayer  = "Top";
+  }
+  if (Layer == 16)
+  {
+    FileExt = ".mnb";
+    sLayer  = "Bottom";
+  }
+
+  board(B)
+  FileName = filesetext (B.name, FileExt);
+  FileName = dlgFileSave("Save Pick-and-Place File - Layer " + sLayer, FileName);
+  if (FileName)
+  {
+    string a[];
+    if (!fileglob(a, FileName) || dlgMessageBox("File '" + FileName + "' already exists.\n\nOverwrite?", "+&Yes", "-&No") == 0)
+    {
+      output(FileName, "wt")
+      {
+        if (Units == 0)  // mm
+          printf("Units of X-Y coordinates are in millimeters\n");
+        else             // inches
+          printf("Units of X-Y coordinates are in inches\n");
+
+        if (Delim == 0)  //Space
+          printf("Part     X      Y   Angle Value                Package\n");
+        else             //Tab
+          printf("Part\tX\tY\tAngle\tValue\tPackage\n");
+
+        board(B)
+        {
+          B.elements(E)
+          {
+            int wasSmd,
+              xmax =-2147483648,
+              xmin = 2147483647,
+              ymax = xmax,
+              ymin = xmin;
+      
+            wasSmd = 0;
+      
+            E.package.contacts(C)
+            {
+              if (C.smd && C.smd.layer == Layer)
+              {
+                wasSmd = 1;
+  
+                if (C.x > xmax) xmax = C.x;
+                if (C.y > ymax) ymax = C.y;
+                if (C.x < xmin) xmin = C.x;
+                if (C.y < ymin) ymin = C.y;
+              }
+            }
+      
+            if (wasSmd)
+            {
+              if (Units == 0)    //mm
+              {
+                if (Delim == 0)  //Space
+                  printf("%-5s %6.2f %6.2f  %3.0f  %-20s %s\n",
+                  E.name, u2mm((xmin + xmax)/2), u2mm((ymin + ymax)/2), E.angle, E.value, E.package.name);
+                else             //Tab
+                  printf("%s\t%.2f\t%.2f\t%.0f\t%s\t%s\n",
+                  E.name, u2mm((xmin + xmax)/2), u2mm((ymin + ymax)/2), E.angle, E.value, E.package.name);
+              }
+              else               //Inch
+              {
+                if (Delim == 0)  //Space
+                  printf("%-5s %6.3f %6.3f  %3.0f  %-20s %s\n",
+                  E.name, u2inch((xmin + xmax)/2), u2inch((ymin + ymax)/2), E.angle, E.value, E.package.name);
+                else             //Tab
+                  printf("%s\t%.3f\t%.3f\t%.0f\t%s\t%s\n",
+                  E.name, u2inch((xmin + xmax)/2), u2inch((ymin + ymax)/2), E.angle, E.value, E.package.name);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Script Entry Point
+
+if (board)
+{
+  board(B)
+  {
+    string title = "MountSmd_THR - v" + Version;
+
+    int Result = dlgDialog(title)
+    {
+      dlgHBoxLayout
+      dlgSpacing (280);
+      dlgLabel("<b>Generate Pick-and-Place File(s) for SMDs</b");
+      dlgSpacing(8);
+      {
+        dlgGroup("Select Layers")
+        {
+          dlgCheckBox("Top Layer", fLayerTop);
+          dlgCheckBox("Bottom Layer", fLayerBot);
+        }
+        dlgSpacing(8);
+        dlgHBoxLayout
+        {
+          dlgGroup("Units")
+          {
+            dlgRadioButton("mm", Units);
+            dlgRadioButton("inch", Units);
+          }
+          dlgGroup("Delimiter")
+          {
+            dlgRadioButton("Space", Delim);
+            dlgRadioButton("Tab", Delim);
+          }
+        }
+      }
+      dlgSpacing(8);
+      dlgHBoxLayout
+      {
+        dlgStretch(1);
+        dlgPushButton("OK") dlgAccept();
+        dlgPushButton("-Cancel") dlgReject();
+      }
+    };
+
+    if (!Result)
+        exit(0);
+    
+    if (fLayerTop)
+       GenerateFile (1);
+    if (fLayerBot)
+       GenerateFile (16);
+  }
+}
+else
+{
+  dlgMessageBox("\nStart this ULP in a Board    \n", "OK");
+}

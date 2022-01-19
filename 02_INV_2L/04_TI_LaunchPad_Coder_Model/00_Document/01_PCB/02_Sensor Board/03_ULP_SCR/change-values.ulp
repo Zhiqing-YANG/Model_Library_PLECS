@@ -1,0 +1,75 @@
+#usage     "Changes values of parts with a speficif suffix in it's current values.\n"
+    "Author: H. Eilers\n"
+    "Web: www.hanneseilers.de\n"
+    "Use RUN change-values.ulp to start."
+
+#require 6.0100
+
+/* ---- GLOBAL VARIABLES ----*/
+string suffix = "330R";
+string newValue = "";
+string cmd = "GRID inch;";
+
+/* ---- FUNCTIONS ---- */
+
+/* Shows a message box with a simple text message */
+void msgBox(string msg){
+    dlgMessageBox(msg);
+}
+
+/* Renames all signals starting with a specific suffix */
+void renameSignals(){
+    schematic(S){
+        S.sheets(SH){
+         string tmpString = "";
+         sprintf(tmpString, "EDIT .S%d; ",SH.number );
+         cmd += tmpString;
+
+         SH.instances(I){
+            if(strstr(I.value, suffix) == 0){
+                tmpString = "";
+                sprintf(tmpString, "VALUE %s %s; ",I.name, newValue );
+                cmd += tmpString;
+            }
+         }
+        }
+    }
+}
+
+/* Shows parameters dialog */
+int showParametersDialog(){
+    return dlgDialog("Enter Parameters"){
+        dlgVBoxLayout {
+            dlgHBoxLayout{
+                dlgLabel("Value suffix to replace:");
+                dlgStringEdit(suffix);
+            }
+            dlgHBoxLayout{
+                dlgLabel("New value:");
+                dlgStringEdit(newValue);
+            }
+            dlgHBoxLayout{
+                dlgPushButton("+&Accept") dlgAccept();
+                dlgPushButton("Cancel") dlgReject();
+            }
+
+        }
+    };
+}
+
+/* Main routine */
+void main(){
+
+    if(!schematic){
+        msgBox("Run in schematic!");
+        return;
+    }
+
+    if(showParametersDialog() == 1){
+        status("renaming values with suffix "+suffix+" to "+newValue);
+        renameSignals();
+    }
+
+    exit(cmd);
+}
+

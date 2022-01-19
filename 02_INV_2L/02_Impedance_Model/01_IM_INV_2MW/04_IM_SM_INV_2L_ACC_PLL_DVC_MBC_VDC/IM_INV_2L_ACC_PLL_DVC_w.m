@@ -21,12 +21,13 @@
 
 function [Z_inv_w, Y_inv_w, Z_pcc_w, Y_pcc_w, Z_g_w, Y_g_w] = IM_INV_2L_ACC_PLL_DVC_w(Grid,Inv,Ctrl,w)
 %% Calculation of the Steady-State Values
-Inv.OP.I_L1_d = Inv.OP.V_dc*Inv.OP.I_pv/(1.5*Grid.V_amp);
-Inv.OP.I_L1_q = 0;
-Inv.OP.V_C_d = sqrt((Grid.V_amp+Inv.OP.I_L1_d*(Inv.Filter.R2+Grid.Rg))^2+(Inv.OP.I_L1_d*Grid.wg*(Inv.Filter.L2+Grid.Lg))^2);
+Inv.OP.I_L1_d = Ctrl.I_ref_d;
+Inv.OP.I_L1_q = Ctrl.I_ref_q;
+Inv.OP.V_C_d = sqrt((Grid.V_amp)^2-(Inv.OP.I_L1_q*(Inv.Filter.R2+Grid.Rg)+Inv.OP.I_L1_d*Grid.wg*(Inv.Filter.L2+Grid.Lg))^2)...
+               +Inv.OP.I_L1_d*(Inv.Filter.R2+Grid.Rg)+Inv.OP.I_L1_q*Grid.wg*(Inv.Filter.L2+Grid.Lg);
 Inv.OP.V_C_q = 0;
-Inv.OP.I_C_d = -Inv.OP.V_C_q*Grid.wg*Inv.Filter.C;
-Inv.OP.I_C_q = Inv.OP.V_C_d*Grid.wg*Inv.Filter.C;
+Inv.OP.I_C_d = Inv.OP.V_C_q*Grid.wg*Inv.Filter.C;
+Inv.OP.I_C_q = -Inv.OP.V_C_d*Grid.wg*Inv.Filter.C;
 Inv.OP.V_inv_d = Inv.OP.V_C_d+Inv.OP.I_L1_d*Inv.Filter.R1-Inv.OP.I_L1_q*Grid.wg*Inv.Filter.L1;          
 Inv.OP.V_inv_q = Inv.OP.V_C_q+Inv.OP.I_L1_q*Inv.Filter.R1+Inv.OP.I_L1_d*Grid.wg*Inv.Filter.L1;  
 Inv.OP.M_d = Inv.OP.V_inv_d/(0.5*Inv.OP.V_dc);

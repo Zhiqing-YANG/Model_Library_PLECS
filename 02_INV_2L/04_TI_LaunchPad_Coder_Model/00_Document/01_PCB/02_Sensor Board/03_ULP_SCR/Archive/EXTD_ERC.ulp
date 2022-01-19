@@ -1,0 +1,684 @@
+// THIS PROGRAM IS PROVIDED AS IS AND WITHOUT WARRANTY OF ANY KIND,
+// EXPRESSED OR IMPLIED.
+//
+// Author: A. Zaffran <alf@cadsoft.de>
+//
+//             Deutsche Beschreibung siehe weiter unten.
+//
+/*  *** First start ERC in SHEET ************************************
+ *
+ *  This EAGLE User Language Program performs several checks on the
+ *  nets and pins of a schematic. These checks have been implemented
+ *  as an addition to the builtin ERC, and shall later be incorporated
+ *  in the editor itself.
+ *
+ *  Additional checks:
+ *   - missing junctions
+ *   - unconnected pins in elements with more than three pins
+ *   - supply nets without supply symbol
+ *   - overlap Net
+ *
+ *  Error messages and warnings are written into a file named after
+ *  the schematic, with the extension ".erx" (Additional Electrical Checks).
+ *  The additional script file SETJUNCT.SCR can be used to place
+ *  missing junctions automatically.
+ *
+ *  For displaying errors and warnings you can run the script file
+ *  WARNING.SCR. 
+ *  The script generates a new layer 199 where the error messages 
+ *  appear next to the pins.
+ *
+ *  X                :  Unconnected/open pin; if a net is visible on this pin,
+ *                      it has most probably been placed with the COPY or PASTE
+ *                      command. Please note that nets can only by connected with
+ *                      ADD or MOVE (component).
+ *                  !!! A group placed with PASTE will not be connected.
+ *                     
+ *  ?no wire xx      :  Warning: More than one pin on the same coordinates;
+ *                      xx is the name of the net.
+ *
+ *  no Supply!       :  Warning: The net segment has no supply symbol.
+ *                      Move the segment or several segments to find out if 
+ *                      visibly connected segments are split.
+ *                      You can highlight all wire segments, junctions, and pins of
+ *                      the same net with SHOW, even if the net is not visibly
+ *                      connected. It might also happen that wires placed with PASTE
+ *                      belong to the same net and seem to be connected but do not
+ *                      belong to the same net segment.
+ *                      Connect these segments with the NET command or place a supply
+ *                      symbol on this part net.
+ *
+ *  #1net xx yy      :  Different nets on the same coordinates!
+ *  #2net xx yy      :  Move the net segments to get a clear picture of the situation.
+ *                      xx yy are net names.
+ *                     
+ *  #diff. Pin/xx yy :  Several pins with different names at the same coordinates.
+ *                      xx yy are net names.
+ *
+ *  #one Pin on xx   :  Only one pin connected to net; xx is the net name.
+ *                     
+ *  ?J               :  Junction without net or on the wrong net, or less than
+ *                      three wires + pins appear at this location (delete junction).
+ *                  *** ATTENTION: if only wire segments (no pins) are connected to
+ *                      a junction and if this junction is being deleted, the net will
+ *                      be split into two nets.
+ *                      Reconnect these nets by moving one segment and adding a net
+ *                      line between the two nets with the NET command.
+ *                      
+ *  Use the script WARNDEL.SCR to delete warnings and error messages from the layer
+ *  199 along with the layer itself.
+ *  If you have lost the file WARNDEL.SCR e.g. by running this ULP once again, you
+ *  can generate WARNDEL.SCR with WARNDEL.ULP which will be carried out much faster
+ *  than this ULP.
+ *
+ */
+
+// -----------------------------------------------------------------------
+
+/*  **** Starten Sie ZUERST den ERC im Schaltplan *******************
+ *
+ *  Dieses ULP ergaenzt den Electrical Rule Check um folgende Tests:
+ *   - fehlende Junctions
+ *   - unbeschaltete Pins bei Bauteilen mit mehr als 2 Pins
+ *   - Versorgungsnetze ohne Supply-Symbol
+ *   - Ueberlappen von unterschiedlichen Netzen
+ *  
+ *  Diese Funktionen werden in einer spaeteren Eagle-Version in den 
+ *  Schaltplan-Editor integriert.
+ *
+ *  Zusaetzlich wird das Script SETJUNCT.SCR erzeugt; dieses Script 
+ *  kann dazu benutzt werden, fehlende Junctions automatisch zu plazieren.
+ *
+ *  Fuer die grafische Anzeige der Fehler und Warnungen kann des Script
+ *  WARNING.SCR, eingelesen werden.
+ *  Dabei wird ein Layer 199 erstellt, in diesen Layer werden die 
+ *  Fehlermeldungen neben dem Pin plaziert.
+ *
+ *  X                :  Nicht-kontaktierter/offener Pin; sollte ein Netz an
+ *                      diesem Pin anliegen, so ist er vermutlich mit Copy oder
+ *                      oder Paste plaziert worden. Beachten Sie, dass Netze bzw.
+ *                      Pins nur bei ADD und MOVE angeschlossen werden.
+ *                  !!! Eine mit PASTE plazierte Gruppe wird nicht kontaktiert.
+ *                     
+ *  ?no wire xx      :  Hinweis: Es sind mehrere Pins an derselben Koordinate
+ *                      ohne Wire verbunden (kein Error).
+ *                      xx ist der Netzname.
+ *
+ *  no Supply!       :  Hinweis: Das Netzsegment hat kein Supply-Symbol.
+ *                      Bewegen Sie das Segment oder mehrere Segmente mit MOVE,
+ *                      um die Unterbrechung zu finden.
+ *                      Hinweis: SHOW zeigt alle Wire-Segmente, Junctions und Pins
+ *                      des gleichen Netzes an, auch wenn das Element grafisch
+ *                      nicht verbunden ist.
+ *                      Ebenso kann es sein, dass sich Wires, die mit Paste eingefuegt
+ *                      wurden, optisch beruehren, aber nicht zum gleichen
+ *                      Netz-Segment gehoeren, wohl aber zum gleichen Netz.
+ *                      Verbinden Sie die beiden Segmente mit Net, oder plazieren
+ *                      Sie ein Sypply-Symbol an diesem Teil-Netz.
+ *
+ *  #1net xx yy      :  Es sind unterschiedliche Netze an denselben Koordinaten!
+ *  #2net xx yy      :  Verschieben Sie die Netzsegmente, um Klarheit zu schaffen.
+ *                      xx yy sind die Netznamen.
+ *                     
+ *  #diff. Pin/xx yy :  Es sind mehrere Pins mit unterschiedlichen Netzen
+ *                      an den gleichen Koordinaten.
+ *                      Kontrolle mit MOVE (Bauteile) und SHOW Netzname.
+ *                      xx yy sind die Netznamen.
+ *
+ *  #one Pin on xx   :  Es ist nur ein Pin am Netz angeschlossen; xx ist der Netzname.
+ *                     
+ *  ?J               :  Hier ist eine Junction ohne bzw. am falschen Netz, oder
+ *                      es sind weniger als 3 Wires+Pins an den Koordinaten
+ *                      (Junction loeschen).
+ *                  *** ACHTUNG: sind nur Wire-Segmente (keine Pins) mit einer
+ *                      Juction verbunden und wird die Junction geloescht,
+ *                      dann wird das Netz in zwei Netze aufgetrennt.
+ *                      Verbinden Sie die beiden Netze wieder, indem Sie ein
+ *                      Segment etwas verschieben und dann mit Net wieder
+ *                      verbinden.
+ *                      
+ *  Mit dem Script WARNDEL.SCR, koennen Sie die Warnungen und Fehlermeldungen
+ *  aus dem Layer 199 inkl. den Layer selbst loeschen.
+ *  Sollten Sie die Datei WARNDEL.SCR geloescht oder durch einen Neustart
+ *  dieses ULPs ueberschrieben haben, koennen Sie mit WARNDEL.ULP nur das
+ *  Script WARNDEL.SCR selbst erzeugen.
+ *  Die Laufzeit dieses ULPs ist bedeutend kuerzer.
+ *
+ */
+
+string version = "Version 1.4";
+
+int errlay = 199;           // default Layer for Errors & Warnings to place Symbol(Text)
+int errcolor = 5;           // default color for Error Layer
+int xt = 4400, yt = 6300;   // offset in .1 micron for place symbol on errlay at Pin-coord.
+real size = 0.05;           // Text Size in Inch
+
+// Add further "known supply names" to this array if necessary:
+
+string SupplyNames[] = { "+5V", "+12V", "+15V", "+18V", "+24V",
+                         "-5V", "-12V", "-15V", "-18V", "-24V",
+                         "0V",  "GND", "GNDA", "GNDINT", "GNDIO",
+                         "PE", "+V", "-V", "VCC", "VCC/2", 
+                         "VCCINT", "VCCIO", "VDD", "VSS"
+                       };
+
+
+void Header(string name)    // comment in script
+{
+ printf("TEXT 'This file is generated by';\n");
+ printf("TEXT 'EXTD_ERC.ULP %s from Sheet:';\n", version);
+ printf("TEXT '%s';\n", name);
+}
+
+int NetWireAt(UL_SHEET Sheet, int x, int y)
+{
+  Sheet.nets(N) {
+    N.segments(S) {
+      S.wires(W) {
+        if (W.x1 == x && W.y1 == y || W.x2 == x && W.y2 == y)  // Begin or End of Wire = x y
+           return 1;
+        }
+      }
+    }
+  return 0;
+}
+
+// main
+
+schematic(SCH) {
+  
+  output(filesetext(SCH.name, ".erx")) {
+    Header(SCH.name);
+    printf("Start also ERC from Sheet or Board.\n\n");
+    printf("start SETJUNCT.SCR in %s for autoplace Junctions\n", SCH.name);
+    printf("start WARNING.SCR  in %s for place Warning- and Error-Text\n", SCH.name);
+    printf("start WARNDEL.SCR  in %s for delete Layer %d\n", SCH.name,  errlay);
+
+
+    output("SETJUNCT.SCR", "wt") {    // open Script for auto place Junction
+      //printf("EDIT %s;\n", SCH.name);
+      Header(SCH.name);
+      printf("GRID INCH;\nGRID 0.1;\n");
+      }
+    
+    output("WARNING.SCR", "wt") {     // open Script for place Warnings & Errors
+      Header(SCH.name);               // *  you can read this Script for 
+                                      // *  autoplace Error- and Warning-Symbol
+                                      // *  after correction you can
+         // * Script header *         // *  delete this Layer with WARNDEL.SCR
+         printf("LAYER %d 'EXTD_ERC';\n", errlay);
+         printf("CHANGE LAYER %d;\n", errlay);
+         printf("SET COLOR_LAYER %d %d;\n", errlay, errcolor);
+         printf("GRID INCH;\n");
+         printf("GRID 0.1;\n");
+         printf("CHANGE SIZE %4.3f;\n", size);
+         }
+
+    output("WARNDEL.SCR", "wt") {     // open Script for delete Warnings & Errors
+      Header(SCH.name);
+      printf("DISPLAY NONE;\n");
+      printf("LAYER %d;\n", errlay);
+      }                 // * Script header *
+
+    
+    // Check for segments that have a known supply name, but are
+    // not connected to any supply pin:
+
+
+    SCH.sheets(SH) {
+
+      printf("\n Sheet # %d\n\n", SH.number);
+      output("SETJUNCT.SCR", "at") { printf("EDIT .S%d;\n", SH.number); }
+      output("WARNING.SCR", "at")  { printf("EDIT .S%d;\n", SH.number); }
+      output("WARNDEL.SCR", "at")  { printf("EDIT .S%d;\n", SH.number); }
+
+      
+      string NetName[];
+      int       jx[], jy[], jd[],     NumJunctions = 0;
+      // Junction : x, y,   diameter, counter
+      
+      int   px[], py[], pq[],     pj[],       PinPoints = 0;                    
+      // Pin : x, y,    quantity, Junct-Flag, counter
+      
+      string  pa[],     pc[],    pnn[],   nn[],         nm[];
+           // partname, padname, pinname, netname-wire, netname-pin
+      
+      int     pxref[], pyref[], RefPoints = 0, UncPoints = 0;
+      // PinRef.  : x, y,       counter,       counter
+      string  paref[],  pcref[], pnnref[], nmref[];
+           // partname, padname, pinname,  netname-pin
+      
+      int      wx[], wy[], wq[],     wp[],         WirPoints = 0;
+      // Wire : x,   y,    quantity, pin-referenz, counter
+
+
+      
+      // **** Collect all PinRef. *********
+      SH.nets(N) {
+        N.segments(S) {
+          S.pinrefs(P) {
+            UL_PIN pin = P.pin;
+               pxref[RefPoints] = pin.x;                    // x coord.
+               pyref[RefPoints] = pin.y;                    // y ccord.
+               nmref[RefPoints] = N.name;                   // net-name of pin
+               paref[RefPoints] = P.part.name;              // PART name
+               pnnref[RefPoints] = pin.name;                // PIN name
+               if (pin.contact) {
+                  pcref[RefPoints] = pin.contact.name;      // PAD name von Connect Pin-Pad
+                  }
+               else {
+                  pcref[RefPoints] = " no pac.";            // kein Pad-Name nur Symbol!!
+                  }
+               RefPoints++;
+            }
+          }
+        }  // *** collect all PinRef. end ***
+      
+      SH.nets(N) {
+
+        int net = 0;     // check if net in use
+
+        // Check if we have a known supply net:
+        int i = 0, IsSupply = 0;
+        do {
+           if (N.name == SupplyNames[i]) {
+              IsSupply = 1;
+              break;
+              }
+           } while (SupplyNames[i++]);
+         
+        // Check all Segments
+        int xpref = 0, ypref = 0;
+        N.segments(S) {
+        
+          S.pinrefs(PR)  {
+              xpref = PR.pin.x;
+              ypref = PR.pin.y;
+                  break;
+              }
+          
+          // Collect all junctions:
+          S.junctions(J) {
+            NetName[NumJunctions] = N.name;
+            jx[NumJunctions] = J.x;
+            jy[NumJunctions] = J.y;
+            jd[NumJunctions] = J.diameter;
+            NumJunctions++;
+            }
+          
+          // Check for junctions that only appear to connect wires:
+          if (IsSupply) {
+             int ConnectedToSupply = 0;
+             S.pinrefs(PR) {
+               if (PR.pin.direction == PIN_DIRECTION_SUP) {
+                  ConnectedToSupply = 1;
+                  break;
+                  }
+               }
+             if (!ConnectedToSupply) {
+                // Let's find some point to identify this segment:
+                int x, y, FoundWire = 0;
+                S.wires(W) {
+                  x = (W.x1 + W.x2) / 2;
+                  y = (W.y1 + W.y2) / 2;
+                  FoundWire = 1;
+                  break;                        // the first wire will do
+                  }
+                if (!FoundWire) {
+                   S.pinrefs(PR)  {
+                     x = PR.pin.x;
+                     y = PR.pin.y;
+                     break;
+                     }
+                  }
+                printf("WARNING #1 .S%-2d: (%6.3f %6.3f) Net '%s', Segment has no supply pin!\n",
+                                 SH.number, u2inch(x), u2inch(y), N.name);
+                output("WARNING.SCR", "at") {
+                   printf("TEXT 'no Supply!' (%6.3f %6.3f);\n",
+                          u2inch(x - xt), u2inch(y - yt));
+                   }
+                output("WARNDEL.SCR", "at") {
+                   printf("DEL (%6.3f %6.3f);\n", u2inch(x - xt), u2inch(y - yt));
+                   }
+                }
+             }
+                       
+          // Check all wires against the junctions:
+          // This assumes that all wires are orthogonal, which appears to
+          // be a reasonable assumption for a schematic. Otherwise it would
+          // be more complicated to calculate the distance between a junction
+          // and a wire.
+
+          
+          S.wires(W) {
+          
+            net++;        // has net wires ?
+            
+            int dx = W.x2 - W.x1;
+            int dy = W.y2 - W.y1;
+            
+            for (int jw = 0; jw < NumJunctions; jw++) {
+                if (NetName[jw] != N.name) {
+                   int d = jd[jw] / 2;
+                   int error = 0;
+                   if (dx == 0) {                       // vertical wire
+                      if (abs(W.x1 - jx[jw]) < d &&
+                          jy[jw] < max(W.y1, W.y2) + d &&
+                          jy[jw] > min(W.y1, W.y2) - d)
+                         error = 1;
+                      }
+                   else if (dy == 0) {                  // horizontal wire
+                      if (abs(W.y1 - jy[jw]) < d &&
+                          jx[jw] < max(W.x1, W.x2) + d &&
+                          jx[jw] > min(W.x1, W.x2) - d)
+                         error = 1;
+                      }
+                   
+                   if (error) {
+                      printf("ERROR   #1: (%6.3f %6.3f) Junction appears to connect nets '%s' and '%s'\n",
+                                     u2inch(jx[jw]), u2inch(jy[jw]), N.name, NetName[jw]);
+                      output("WARNING.SCR", "at") {
+                         printf("TEXT '!J' (%6.3f %6.3f);\n",
+                               u2inch(jx[jw] - xt), u2inch(jy[jw] - yt));
+                         }
+                      output("WARNDEL.SCR", "at") {
+                         printf("DEL (%6.3f %6.3f);\n", u2inch(jx[jw] - xt), u2inch(jy[jw] - yt));
+                         }
+                      }
+                   }
+                }
+            
+            // Collect Wire coordinates
+            int NewPoint1 = 1, NewPoint2 = 1;
+
+            for (int ww = 0; ww < WirPoints; ww++) {
+                if (W.x1 == wx[ww] && W.y1 == wy[ww]) {
+                   if (N.name != nn[ww]) {
+                      printf("ERROR  #2a .S%-2d: (%6.3f %6.3f) diff. Net on ccord. %s - %s\n",
+                             SH.number, u2inch(wx[ww]) , u2inch(wy[ww]), N.name, nn[ww]);
+                      output("WARNING.SCR", "at") {
+                         printf("TEXT '#1net %s %s' (%6.3f %6.3f);\n",
+                             N.name, nn[ww], u2inch(wx[ww] - xt), u2inch(wy[ww] - yt));
+                         }
+                      output("WARNDEL.SCR", "at") {
+                         printf("DEL (%6.3f %6.3f);\n", u2inch(wx[ww] - xt), u2inch(wy[ww] - yt));
+                         }
+                      }
+                   else {
+                      NewPoint1 = 0;
+                      wq[ww]++;
+                      }
+                   }
+
+                if (W.x2 == wx[ww] && W.y2 == wy[ww]) {
+                   if (N.name != nn[ww]) {
+                      printf("ERROR  #2b .S%-2d: (%6.3f %6.3f) diff. Net on ccord. %s - %s\n",
+                            SH.number, u2inch(wx[ww]) , u2inch(wy[ww]), N.name, nn[ww]);
+                      output("WARNING.SCR", "at") {
+                         printf("TEXT '#2net %s %s' (%6.3f %6.3f);\n",
+                               N.name, nn[ww], u2inch(wx[ww] - xt), u2inch(wy[ww] + yt));
+                         }
+                      output("WARNDEL.SCR", "at") {
+                         printf("DEL (%6.3f %6.3f);\n", u2inch(wx[ww] - xt), u2inch(wy[ww] - yt));
+                         }
+                      }
+                   else {
+                      NewPoint2 = 0;
+                      wq[ww]++;
+                      }
+                   }
+                }
+               if (NewPoint1) {
+                  wx[WirPoints] = W.x1;
+                  wy[WirPoints] = W.y1;
+                  wq[WirPoints] = 1;              // count Wire on ccord.
+                  wp[WirPoints] = -1;
+                  nn[WirPoints] = N.name;
+                  WirPoints++;
+                  }
+               if (NewPoint2) {
+                  wx[WirPoints] = W.x2;
+                  wy[WirPoints] = W.y2;
+                  wq[WirPoints] = 1;              // count Wire on ccord.
+                  wp[WirPoints] = -1;
+                  nn[WirPoints] = N.name;
+                  WirPoints++;
+                  }
+            }
+          }
+          // check if a Junction on net coordinate
+          int junc = -1;
+          if (net == 0) {
+             for (int noj = 0; noj < NumJunctions; noj++) {
+                 if (jx[noj] == xpref && jy[noj] == ypref) {
+                    junc = noj;
+                    break;
+                    }
+                 }
+             }
+        }
+      
+      // Check if there are exactly that many pinrefs:
+      // *** collect all pin coordinate on sheet ***
+      SH.parts(PA) {
+        PA.instances(IN) {
+          IN.gate.symbol.pins(P) {
+          
+            int NewPin = 1;
+            int pin_on_net = 0;     // flag is Pin connected with net
+            string netnam;          // netname on Pin
+            
+            // * check if Pin connected on net *
+            for (int ir = 0; ir < RefPoints; ir++) {
+               if ( PA.name != paref[ir] || P.x != pxref[ir] || P.y != pyref[ir]) {
+                  // 
+                  }
+               else {
+                  pin_on_net = 1;
+                  netnam = nmref[ir];                       // extract Net name
+                  break;
+                  }
+               }
+            if ( pin_on_net == 0) {
+               UncPoints++;
+               printf("WARNING #2 .S%-2d: (%6.3f %6.3f) %4s unconnected Pin %3s\n", 
+                           SH.number, u2inch(P.x), u2inch(P.y), PA.name, P.name);
+               output("WARNING.SCR", "at") {
+                  printf("TEXT 'X' (%6.3f %6.3f);\n",
+                           u2inch(P.x - xt), u2inch(P.y - yt));
+                  }
+               output("WARNDEL.SCR", "at") {
+                  printf("DEL (%6.3f %6.3f);\n", u2inch(P.x - xt), u2inch(P.y - yt));
+                  }
+               }
+            // check more pin on coord.
+            
+            for (int pcnt = 0; pcnt < PinPoints; pcnt++) {
+                if (P.x == px[pcnt] && P.y == py[pcnt]) {
+
+
+                  // *** gleicher Netzname ??  ***
+                  if (netnam != nm[pcnt]) {
+                     printf("ERROR   #3 .S%-2d: (%6.3f %6.3f) many diff. Pin %s %s ;\n",
+                             SH.number, u2inch(P.x), u2inch(P.y), netnam, nm[pcnt]);
+
+                     output("WARNING.SCR", "at") {
+                        printf("TEXT '#diff. Pin/%s %s' (%6.3f %6.3f);\n",
+                             netnam, nm[pcnt], u2inch(P.x - xt), u2inch(P.y - yt - yt));
+                        }
+                     output("WARNDEL.SCR", "at") {
+                        printf("DEL (%6.3f %6.3f);\n", u2inch(P.x - xt), u2inch(P.y - yt -yt));
+                        }
+                     break;
+                     }
+
+                   pq[pcnt]++;                            // count pins at coord.
+                   NewPin = 0;
+                   break;
+                   }
+                }
+            
+            if (NewPin) {
+               px[PinPoints] = P.x;
+               py[PinPoints] = P.y;
+               pq[PinPoints] = 1;                         // counter for pins on same coord.
+               pa[PinPoints] = PA.name;                   // PART name
+               nm[PinPoints] = netnam;                    // Netzname dem Pin zuweisen
+               pnn[PinPoints] = P.name;                   // PIN name
+               if (P.contact) {
+                  pc[PinPoints] = P.contact.name;         // PAD name von Connect/Pad
+                  }
+               else {
+                  pc[PinPoints] = " no pac.";             // kein Pad-Name nur Symbol!!
+                  // check if Supply-Pin on connected Pin
+                  }
+               PinPoints++;
+               }
+            }
+          }
+        }
+      
+      // add Pin counter to Wire counter             
+      // teste ob an den Pins auch Wires gesetzt sind, 
+      // dann addiere den Pinzaehler auf den Netzzaehler
+      // und setze eine Referenz zum Netznamen
+      for (int p = 0; p < PinPoints; p++) {
+      
+          for (int iw = 0; iw < WirPoints; iw++) {
+              if (px[p] == wx[iw] && py[p] == wy[iw]) {
+                 wq[iw] += pq[p];                   // addiere den Pin-Zaehler auf den Netz-Zaehler.
+                 wp[iw] = p;                        // ref. to pad name                        
+                 pj[p] = wq[iw];                    // Summe Pin+Wire fuer Junctiontest
+                 pq[p] = -1;                        // reset Pin counter
+                 break;                      
+                 }
+              }
+          }
+         
+      // suche nach Junction an Wire-Punkten,
+      // wenn mehr als 2 Netzsegmente eine Koordinate treffen,
+      // muss auch ein Junction da sein.
+      // Check for multiple (>2) wires + pins of the same net segment that end at the
+      // same point, but are not visibly connected through a junction:
+        
+      for (int iw = 0; iw < WirPoints; iw++) {
+      
+          int FoundJunction = 0;      
+          if (wq[iw] > 2) {
+             int j = 0;
+             for (j = 0; j < NumJunctions; j++) {
+                 if (jx[j] == wx[iw] && jy[j] == wy[iw]) {
+                    FoundJunction = 1;
+                    break;
+                    }
+                 }
+                 if (!FoundJunction) {
+                       printf("ERROR   #4 .S%-2d: (%6.3f %6.3f) Net '%s': missing junction\n",
+                                        SH.number, u2inch(wx[iw]), u2inch(wy[iw]), nn[iw]);
+                       output("SETJUNCT.SCR", "at") {
+                            printf("Junction (%6.3f %6.3f);\n",
+                                 u2inch(wx[iw]), u2inch(wy[iw]));   // place Junction
+                    }
+                 }
+             }
+          }
+      
+      for (int ip = 0; ip < PinPoints; ip++) {
+      int FoundJunction = 0;      
+          if (pq[ip] > 2) {
+             int j = 0;
+             for (j = 0; j < NumJunctions; j++) {
+                 if (jx[j] == px[ip] && jy[j] == py[ip]) {
+                    pj[ip] = pq[ip];                  // copy to Junction falg
+                    FoundJunction = 1;
+                    break;
+                    }
+                 }
+             if (!FoundJunction) {
+                printf("ERROR   #5 .S%-2d: (%6.3f %6.3f) missing junction on %s Pin %3s:%s\n",
+                                SH.number, u2inch(px[ip]), u2inch(py[ip]), pa[ip], pc[ip], pnn[ip]);
+                output("SETJUNCT.SCR", "at") {
+                   printf("Junction (%6.3f %6.3f);\n",
+                                     u2inch(px[ip]), u2inch(py[ip]));
+                   }
+                }
+             }
+          // *** mehrere Pins an einer Koordinate ohne Wire,. Verbindung? *****
+          if (pq[ip] == 2) {
+             printf("ERROR   #6 .S%-2d: (%6.3f %6.3f) ?no WIRE? on Pin %-4s check with \"SHOW %s\n", 
+                            SH.number, u2inch(px[ip]), u2inch(py[ip]), pnn[ip], nm[ip]);
+             output("WARNING.SCR", "at") {
+                printf("TEXT '?no wire %s' (%6.3f %6.3f);\n",
+                          nm[ip], u2inch(px[ip] - xt) , u2inch(py[ip] - yt));
+                }
+             output("WARNDEL.SCR", "at") {
+                printf("DEL (%6.3f %6.3f);\n", u2inch(px[ip] - xt) , u2inch(py[ip] - yt));
+                }
+             }
+          } 
+      
+      // Check for pins that only appear to be connected:
+      // Count the number of pins at each point where pins are located:
+      // Screen out single pin locations:
+      
+      for (int si = 0; si < WirPoints; si++) {
+          if (pq[si] != 1 && NetWireAt(SH, px[si], py[si]))   // *** changed   >!NetWireAt<  *** -alf
+             pq[si] = 0;
+          }
+               
+      for (int ii = 0; ii < PinPoints; ii++) {
+          if (pq[ii] == 1) {
+             if (nm[ii] != "") {
+                printf("WARNING #3 .S%-2d: (%6.3f %6.3f) %4s only one pin on net %s Pin %3s : Pad %s\n", 
+                           SH.number, u2inch(px[ii]), u2inch(py[ii]), pa[ii], nm[ii], pnn[ii], pc[ii]);
+                output("WARNING.SCR", "at") {
+                   printf("TEXT '#one Pin on s%s' (%6.3f %6.3f);\n",
+                           nm[ii], u2inch(px[ii] - xt), u2inch(py[ii] + yt));
+                   }
+                output("WARNDEL.SCR", "at") {
+                   printf("DEL (%6.3f %6.3f);\n", u2inch(px[ii] - xt), u2inch(py[ii] + yt));
+                   }
+                }
+             pq[ii] = 0;     // *** Reset Pin count ***
+             }
+           }
+        // check Junction with out wire or pin
+        for (int jc = 0; jc < NumJunctions; jc++) {            // check all junction
+            int ju = 0;
+            for (int jw = 0; jw < WirPoints; jw++) {
+                if (jx[jc] == wx[jw] && jy[jc] == wy[jw]) {    // junction coord. >2 wire
+                   ju = wq[jw];
+                   break;
+                   }
+                }
+            if (ju < 3) {
+               for (int jp = 0; jp < PinPoints; jp++) {        // or junction coord. >2 Pin
+                  if (jx[jc] == px[jp] && jy[jc] == py[jp]) {
+                     ju = pj[jp];
+                     break;
+                     }
+                  }
+               }
+            if (ju < 3) {
+               printf("ERROR   #7 .S%-2d: (%6.3f %6.3f) Delete Junction\n",
+                              SH.number, u2inch(jx[jc]), u2inch(jy[jc]));
+               output("WARNING.SCR", "at") {
+                  printf("TEXT '?J' (%6.3f %6.3f);\n",
+                        u2inch(jx[jc] - xt), u2inch(jy[jc] - yt));
+                  }
+               output("WARNDEL.SCR", "at") {
+                  printf("DEL (%6.3f %6.3f);\n", u2inch(jx[jc] - xt), u2inch(jy[jc] - yt));
+                  }
+               }
+            }
+       printf("Sheet %d: found= %d connected Pins / %d unconnected Pins / %d Junction\n",
+              SH.number, RefPoints, UncPoints, NumJunctions);
+       }
+     output("WARNDEL.SCR", "at") {
+       printf("LAYER -%d;\n", errlay);
+       printf("DISPLAY ALL;\n");
+       printf("DISPLAY -93;\n");
+       }
+     printf("\nEnd EXTD_ERC\n");
+   }
+ }

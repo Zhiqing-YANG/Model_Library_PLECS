@@ -13,8 +13,6 @@ simtime = 0.1;
 % Object of Three Phase DAB
 DAB3 = Def_DAB3();
 
-DAB3 = Def_DAB3();
-
 % Object of Setting Operating Point
 Set.V_fix = 'Vin';
 Set.V_ratio = 0.95;

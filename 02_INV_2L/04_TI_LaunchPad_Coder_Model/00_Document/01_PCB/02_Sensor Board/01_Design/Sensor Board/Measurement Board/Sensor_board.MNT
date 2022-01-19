@@ -1,0 +1,6 @@
+Units of X-Y coordinates are in millimeters
+Part     X      Y   Angle Value                Package
+LED1   33.33 139.40  270                       CHIPLED_0805
+LED3   26.98 135.59   90                       CHIPLED_0805
+R27    33.33 135.59    0  2k                   R0805
+R30    26.98 139.40  180  2k                   R0805

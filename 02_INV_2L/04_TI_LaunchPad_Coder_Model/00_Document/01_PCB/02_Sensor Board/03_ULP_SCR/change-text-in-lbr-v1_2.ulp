@@ -1,0 +1,218 @@
+#usage "<b>Change library fonts to vector and text sizes/ratio to new defined values </b>\n"
+       "<p>This script changes all fonts to vector and loops through all packages and symbols "
+       "in a library and changes the text size and ratio to new user specified values.<p> "
+       "Based on change-text-in-lbr.ulp from Bob Starr, extented to change fonts to vector and "
+       "text sizes of layers 21, 25, 27, 48, 51 for packages, and layers 94, 95, 96, 97 for symbols.<br> "
+       "Choose text layer for additional information from layers 21, 48, 51, 94 or 97 only. "
+       "Do not use layers 25, 27, 95 and 96 for additional information.<p>"
+       "<author>Author: support@cadsoft.de</author><p>"
+
+
+//HISTORY
+// Version 1.0 -- Changes text sizes in packages
+// Version 1.1 -- Changes text sizes also in symbols -- support@cadsoft.de 2016-05-09
+// Version 1.2 -- Changes fonts and text sizes added for layers 48, 51, 97, added -- babgue@arcor.de 2016-05-09
+
+string ulp_path = "";
+string script_change = "";
+
+int Result = 0;
+string grid = "GRID MIL FINEST;\n";
+
+// new text sizes/ratios in mils
+// packages
+real tPlaceSize    = 30;
+int  tPlaceRatio   = 14;
+
+real tNamesSize    = 30;
+int  tNamesRatio   = 14;
+
+real tValuesSize   = 18;
+int  tValuesRatio  = 14;
+
+real tDocuSize     = 18;															//tDocu hinzu
+int  tDocuRatio    = 14;
+
+real DocuSize      = 18;														   	//Docu hinzu
+int  DocuRatio     = 14;
+
+// symbols
+real SymbolSize    = 50;
+int  SymbolRatio   = 10;
+
+real NameSize      = 70;
+int  NameRatio     = 10;
+
+real ValueSize     = 50;
+int  ValueRatio    = 10;
+
+real InfoSize      = 40;															//Info hinzu
+int  InfoRatio     = 10;
+
+
+void DoPackage(UL_PACKAGE P) {
+
+    real dx, dy;
+
+    P.texts(T) {
+        dx = u2mil(T.x);
+        dy = u2mil(T.y);
+              printf("CHANGE FONT VECTOR (%.3f %.3f);\n", dx, dy);					//Vector font hinzu
+        if (T.layer == 21) {
+            // Change tPlace layer text
+	    printf("CHANGE SIZE %.3f (%.3f %.3f);\n", tPlaceSize, dx, dy);
+            printf("CHANGE RATIO %d (%.3f %.3f);\n", tPlaceRatio, dx, dy);
+        } else if (T.layer == 25) {
+            // Change tNames layer text
+	    printf("CHANGE SIZE %.3f (%.3f %.3f);\n", tNamesSize, dx, dy);
+            printf("CHANGE RATIO %d (%.3f %.3f);\n", tNamesRatio, dx, dy);
+        } else if (T.layer == 27) {
+            // Change tValues layer text
+	    printf("CHANGE SIZE %.3f (%.3f %.3f);\n", tValuesSize, dx, dy);
+            printf("CHANGE RATIO %d (%.3f %.3f);\n", tValuesRatio, dx, dy);
+        } else if (T.layer == 51) {													//tDocu Hinzu
+            // Change tValues layer text
+	    printf("CHANGE SIZE %.3f (%.3f %.3f);\n", tDocuSize, dx, dy);
+            printf("CHANGE RATIO %d (%.3f %.3f);\n", tDocuRatio, dx, dy);
+        } else if (T.layer == 48) {													//Docu hinzu
+            // Change tValues layer text
+	    printf("CHANGE SIZE %.3f (%.3f %.3f);\n", DocuSize, dx, dy);
+            printf("CHANGE RATIO %d (%.3f %.3f);\n", DocuRatio, dx, dy);
+        }
+    }
+}
+
+void DoSymbol(UL_SYMBOL S) {
+
+    real dx, dy;
+
+    S.texts(T) {
+        dx = u2mil(T.x);
+        dy = u2mil(T.y);
+              printf("CHANGE FONT VECTOR (%.3f %.3f);\n", dx, dy);
+        if (T.layer == 94) {
+            // Change texts in Symbols layer
+	    printf("CHANGE SIZE %.3f (%.3f %.3f);\n", SymbolSize, dx, dy);
+            printf("CHANGE RATIO %d (%.3f %.3f);\n", SymbolRatio, dx, dy);
+        } else if (T.layer == 95) {
+            // Change Names layer text
+	    printf("CHANGE SIZE %.3f (%.3f %.3f);\n", NameSize, dx, dy);
+            printf("CHANGE RATIO %d (%.3f %.3f);\n", NameRatio, dx, dy);
+        } else if (T.layer == 96) {
+            // Change Values layer text
+	    printf("CHANGE SIZE %.3f (%.3f %.3f);\n", ValueSize, dx, dy);
+		            printf("CHANGE RATIO %d (%.3f %.3f);\n", ValueRatio, dx, dy);
+        } else if (T.layer == 97) {													//Info hinzu
+		 // Change Info layer text
+	    printf("CHANGE SIZE %.3f (%.3f %.3f);\n", InfoSize, dx, dy);
+            printf("CHANGE RATIO %d (%.3f %.3f);\n", InfoRatio, dx, dy);
+        }
+    }
+}
+
+
+void menue(void) {
+   int err = 0;
+   int newWidth;
+   int minLimit = 0;
+   int maxLimit = 0;
+
+   dlgDialog("Change All Text Sizes/Ratios in Packages and Symbols") {
+      //dlgStretch(1);
+       dlgHBoxLayout {
+        dlgVBoxLayout { 
+         dlgGroup("Pac: tPlace Text") {
+            dlgHBoxLayout {   dlgLabel("New size (2-100 mils) :\t"); dlgRealEdit(tPlaceSize, 10.0, 100.0);   }
+            dlgHBoxLayout {   dlgLabel("New ratio  (8-20%) :\t"); dlgIntEdit(tPlaceRatio, 8, 20);   }
+         }
+         dlgGroup("Pac: tNames Text") {
+            dlgHBoxLayout {   dlgLabel("New size (2-100 mils) :\t"); dlgRealEdit(tNamesSize, 10.0, 100.0);   }
+            dlgHBoxLayout {   dlgLabel("New ratio  (8-20%) :\t"); dlgIntEdit(tNamesRatio, 8, 20);   }
+         }
+         dlgGroup("Pac: tValues Text") {
+            dlgHBoxLayout {   dlgLabel("New size (2-100 mils) :\t"); dlgRealEdit(tValuesSize, 10.0, 100.0);   }
+            dlgHBoxLayout {   dlgLabel("New ratio (8-20%) :\t"); dlgIntEdit(tValuesRatio, 8, 20);   }
+        }
+		dlgGroup("Pac: tDocu Text") {																					//tDocu hinzu
+            dlgHBoxLayout {   dlgLabel("New size (2-100 mils) :\t"); dlgRealEdit(tValuesSize, 10.0, 100.0);   }
+            dlgHBoxLayout {   dlgLabel("New ratio (8-20%) :\t"); dlgIntEdit(tValuesRatio, 8, 20);   }
+        }
+		dlgGroup("Pac: Docu Text") {																					//Docu hinzu
+            dlgHBoxLayout {   dlgLabel("New size (2-100 mils) :\t"); dlgRealEdit(tValuesSize, 10.0, 100.0);   }
+            dlgHBoxLayout {   dlgLabel("New ratio (8-20%) :\t"); dlgIntEdit(tValuesRatio, 8, 20);   }
+        }
+	   }
+	   
+	   dlgVBoxLayout { 
+         dlgGroup("Sym: Symbol Text") {
+            dlgHBoxLayout {   dlgLabel("New size (2-100 mils) :\t"); dlgRealEdit(SymbolSize, 10.0, 100.0);   }
+            dlgHBoxLayout {   dlgLabel("New ratio  (8-20%) :\t"); dlgIntEdit(SymbolRatio, 8, 20);   }
+         }
+         dlgGroup("Sym: Name Text") {
+            dlgHBoxLayout {   dlgLabel("New size (2-100 mils) :\t"); dlgRealEdit(NameSize, 10.0, 100.0);   }
+            dlgHBoxLayout {   dlgLabel("New ratio  (8-20%) :\t"); dlgIntEdit(NameRatio, 8, 20);   }
+         }
+         dlgGroup("Sym: Value Text") {
+            dlgHBoxLayout {   dlgLabel("New size (2-100 mils) :\t"); dlgRealEdit(ValueSize, 10.0, 100.0);   }
+            dlgHBoxLayout {   dlgLabel("New ratio (8-20%) :\t"); dlgIntEdit(ValueRatio, 8, 20);   }
+         }
+		  dlgGroup("Sym: Info Text") {																					//Info hinzu
+            dlgHBoxLayout {   dlgLabel("New size (2-100 mils) :\t"); dlgRealEdit(ValueSize, 10.0, 100.0);   }
+            dlgHBoxLayout {   dlgLabel("New ratio (8-20%) :\t"); dlgIntEdit(ValueRatio, 8, 20);   }
+         }
+	   }
+   }
+      //dlgStretch(1);
+      dlgPushButton("+&OK") { dlgAccept(); return; }
+      dlgPushButton("-&Cancel") { dlgReject(); exit (0);}
+   };
+}
+
+if (library) {
+   char bkslash = '/';
+   int pos = strrchr(argv[0], bkslash);
+   if (pos >= 0) {
+      ulp_path = strsub(argv[0], 0, pos + 1);
+   }
+   int n = 0;
+   library(L) {
+   int posb = strrchr(argv[0], bkslash);
+   if (posb >= 0) {
+      ulp_path = strsub(argv[0], 0, posb + 1);
+   }
+
+   menue();
+
+   script_change = filesetext(L.name, "~~~.scr");
+
+   output(script_change, "wtD") {
+      int firstf = 1;
+      L.packages(P) {
+         printf("EDIT %s.PAC;\n", P.name);
+         if (firstf) {
+           printf("%s",grid);
+           firstf = 0;
+         }
+         DoPackage(P);
+      }
+      printf("GRID DEFAULT;\n");
+
+      firstf = 1;
+      L.symbols(S) {
+         printf("EDIT %s.SYM;\n", S.name);
+         if (firstf) {
+           printf("%s",grid);
+           firstf = 0;
+         }
+         DoSymbol(S);
+      }
+      printf("DISPLAY ALL;\n");
+  
+   }
+   }
+  exit ("SCRIPT '" + script_change + "';\n"); // REMOVE " + script_change + ";\n");
+} else {
+   dlgMessageBox("\n*** Start this ULP in a Library ***\n");
+   exit (0);
+}
+

@@ -1,0 +1,173 @@
+#usage "Richtet die Bauteile in der aktuellen Gruppe untereinander und/oder am Raster aus.<p>"
+       "<author>Author: Ko</author>"
+ 
+
+ enum {NoAliagn, Left, Top, Center, Right, Bottom, Spread}
+
+int H = NoAliagn, V = NoAliagn, Dummy = 0;
+int Ausrichten = 1;
+string cmd = "" ;
+
+real minx = REAL_MAX, miny = REAL_MAX, maxx = REAL_MIN, maxy = REAL_MIN; 
+int Anzahl = 0;
+int indexX[], indexY[];
+string ElementName[];
+real PosX[], PosY[];
+
+real Grid, UnitFactor;
+int i,j;
+
+if (!board)  { dlgMessageBox("Align Grouped Components (Ko) 15022015\n\nStart this ULP only in a board.", "OK");  exit(-1); }
+
+board(B) {
+
+	switch (B.grid.unitdist)
+	{	case GRID_UNIT_MIC :  Grid = mic2u(B.grid.distance); UnitFactor = mic2u(1);  break;
+		case GRID_UNIT_MM :   Grid = mm2u(B.grid.distance);  UnitFactor = mm2u(1);   break;
+		case GRID_UNIT_MIL :  Grid = mil2u(B.grid.distance); UnitFactor = mil2u(1);  break;
+		case GRID_UNIT_INCH : Grid = inch2u(B.grid.distance);UnitFactor = inch2u(1); break;
+	}
+	
+B.elements(E) {
+	if (ingroup(E))
+			{	
+				if (E.x < minx) minx = E.x;
+				else 
+				if (E.x > maxx) maxx = E.x;
+				
+				if (E.y < miny) miny = E.y;	
+				else
+				if (E.y > maxy) maxy = E.y;	
+				
+				PosX[Anzahl] = E.x;
+				PosY[Anzahl] = E.y;	
+				ElementName[Anzahl] = E.name;
+				
+				Anzahl++;
+			}
+	} 
+}
+
+
+if (!Anzahl)  { dlgMessageBox("Align Grouped Components (Ko)\n\nNo Parts Grouped.", "OK");  exit(-1); }
+
+dlgDialog("Align Components") {
+	dlgHBoxLayout {
+			dlgLabel("Align Grouped Components (Ko)\n\n\n");
+			dlgStretch(1);
+	}
+
+
+dlgGroup(" ARRANGE SELECT "){
+
+	dlgGridLayout {
+
+		dlgCell(0, 1) {dlgStretch(1);dlgLabel("    --    "); dlgStretch(1);}
+		dlgCell(0, 2) {dlgStretch(1);dlgLabel(" LEFT "); dlgStretch(1);}
+		dlgCell(0, 3) {dlgStretch(1);dlgLabel("CENTER"); dlgStretch(1);}
+		dlgCell(0, 4) {dlgStretch(1);dlgLabel("RIGHT"); dlgStretch(1);}
+		dlgCell(0, 5) {dlgStretch(1);dlgLabel("SPREAD"); dlgStretch(1);}
+
+		dlgCell(1, 0) {dlgStretch(1); dlgLabel("--");}
+		dlgCell(2, 0) {dlgStretch(1); dlgLabel("TOP");}
+		dlgCell(3, 0) {dlgStretch(1); dlgLabel("CENTER");}
+		dlgCell(4, 0) {dlgStretch(1); dlgLabel("BOTTOM");}
+		dlgCell(5, 0) {dlgStretch(1); dlgLabel("SPREAD");}
+
+		dlgCell(1, 1) {dlgStretch(1); dlgRadioButton("", Dummy) {V = NoAliagn; H = NoAliagn; Ausrichten = 1;} dlgStretch(1);}
+
+		dlgCell(1, 2) {dlgStretch(1); dlgRadioButton("", Dummy) {V = NoAliagn; H = Left;}   dlgStretch(1);}
+		dlgCell(1, 3) {dlgStretch(1); dlgRadioButton("", Dummy) {V = NoAliagn; H = Center;} dlgStretch(1);}
+		dlgCell(1, 4) {dlgStretch(1); dlgRadioButton("", Dummy) {V = NoAliagn; H = Right;}  dlgStretch(1);}
+		dlgCell(1, 5) {dlgStretch(1); dlgRadioButton("", Dummy) {V = NoAliagn; H = Spread;} dlgStretch(1);}
+
+		dlgCell(2, 1) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Top;    H = NoAliagn;} dlgStretch(1);}
+		dlgCell(3, 1) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Center; H = NoAliagn;} dlgStretch(1);}
+		dlgCell(4, 1) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Bottom; H = NoAliagn;} dlgStretch(1);}
+		dlgCell(5, 1) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Spread; H = NoAliagn;} dlgStretch(1);}
+
+		dlgCell(2, 2) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Top;    H = Left;} dlgStretch(1);}
+		dlgCell(3, 2) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Center; H = Left;} dlgStretch(1);}
+		dlgCell(4, 2) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Bottom; H = Left;} dlgStretch(1);}
+		dlgCell(5, 2) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Spread; H = Left;} dlgStretch(1);}
+
+		dlgCell(2, 3) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Top;    H = Center;} dlgStretch(1);}
+		dlgCell(3, 3) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Center; H = Center;} dlgStretch(1);}
+		dlgCell(4, 3) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Bottom; H = Center;} dlgStretch(1);}
+		dlgCell(5, 3) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Spread; H = Center;} dlgStretch(1);}
+
+		dlgCell(2, 4) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Top;    H = Right;} dlgStretch(1);}
+		dlgCell(3, 4) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Center; H = Right;} dlgStretch(1);}
+		dlgCell(4, 4) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Bottom; H = Right;} dlgStretch(1);}
+		dlgCell(5, 4) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Spread; H = Right;} dlgStretch(1);}
+
+		dlgCell(2, 5) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Top;    H = Spread;} dlgStretch(1);}
+		dlgCell(3, 5) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Center; H = Spread;} dlgStretch(1);}
+		dlgCell(4, 5) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Bottom; H = Spread;} dlgStretch(1);}
+		dlgCell(5, 5) {dlgStretch(1); dlgRadioButton("", Dummy) {V = Spread; H = Spread;} dlgStretch(1);}
+
+		}
+
+}
+	
+dlgHBoxLayout {
+			dlgGroup(" SNAP TO GRID AFTER ALIGN ") 	dlgCheckBox("ENABLE", Ausrichten);
+		      }	
+	
+	dlgHBoxLayout {
+			dlgStretch(1);
+			dlgPushButton("+OK") dlgAccept();
+			dlgPushButton("Cancel") {dlgReject(); exit ("");}
+		}
+};
+
+
+
+
+real dx, dy;
+
+if (Anzahl > 1)
+{
+sort (Anzahl, indexX, PosX);
+sort (Anzahl, indexY, PosY);
+
+dx = (maxx-minx) / (Anzahl-1);
+dy = (maxy-miny) / (Anzahl-1);
+
+for (i = 0; i < Anzahl; i++)
+	{
+		switch (V)
+		{	
+		case Top:    PosY[indexY[i]] = maxy; break; 
+		case Center: PosY[indexY[i]] = (maxy+miny)/2;  break; 
+		case Bottom: PosY[indexY[i]] = miny;  break; 
+		case Spread: PosY[indexY[i]] = miny + dy * i; break; 
+		}
+
+		switch (H)
+		{
+		case Left:   PosX[indexX[i]] = minx; break; 
+		case Center: PosX[indexX[i]] = (maxx+minx)/2;  break; 
+		case Right:  PosX[indexX[i]] = maxx;  break; 
+		case Spread: PosX[indexX[i]] = minx + dx * i; break; 
+		}
+	}
+}
+
+
+if (Anzahl > 0) 
+if (Ausrichten) {
+for (i = 0; i < Anzahl; i++)
+	{
+	PosX[i] = (round (PosX[i] / Grid) * Grid);
+	PosY[i] = (round (PosY[i] / Grid) * Grid);		
+	} 
+}
+
+for (i = 0; i < Anzahl; i++) sprintf (cmd,"%smove %s (%f %f) ;\n",cmd,ElementName[i], PosX[i] / UnitFactor, PosY[i] / UnitFactor); 
+
+exit (cmd);
+
+
+
+

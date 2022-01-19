@@ -1,0 +1,173 @@
+/*  WIRELIST.ULP ---- A WIRE WRAPPING NETLIST User Language Program (Ver. 1.0 - 13/09/05) - by Joseph Zeglinski
+ *  A modification of "TESTPNTS.ULP" - by Richard Hammerl (CADSOFT), 
+
+ *  PURPOSE:
+ *  This ULP is for those who need a shortest, point-to-point, "wire wrapping (or soldering)" run list for nets 
+ *  in a board produced from an EAGLE schematic. Applications include "prototype breadboard" or "project board"  
+ *  layouts for testing or hobby projects.
+ *
+ *  This EAGLE User Language Program (ULP) produces the netlist with X & Y locations of pads/wire wrap pins
+ *  on a board, or a netlist of a schematic. It is saved as a "<BRD-Name>_WW.SCR" script file which the user can
+ *  simply view/print, or execute on a new, fully laid out BRD file - but ONLY after he executes DELETE SIGNALS to
+ *  remove all  of the original NETS, produced by the original matching SCH schematic file. This allows display
+ *  of the resulting "wire runs" (no more than 2 wraps per pin). Each "constellation" of a signal's wire run can
+ *  be high lighted using the Eagle SHOW <signal-name> command, to verify the expected run. New columns were
+ *  added to augment the X & Y coordinates, with pin-to-pin wire lengths in (mils), as well as the 
+ *  X & Y wire wrap pin's, equivalent board Row & Column numbers. The latter are "rounded up" in cases where the user
+ *  placed parts with pins in grid "spaces", instead of on "grid lines", to gain an extra row from the licensed
+ *  Eagle board size limit. This results in "thin border edges and an offset pad spacing. A library part symbol
+ *  might also be poorly designed, with pads not falling on even grid lines. Such pin positions are "Rounded Up", to align 
+ *  board row & column numbers in this netlist SCR file, so wired pins fall on STANDARD 0.1 inch (2.54 mm) GRID LINES.
+
+ *  REPORT LAYOUT:
+ *  The information header identifies the ULP revision, and the BOARD file name, along with a warning, and column names.
+ *  The body of the netlist is a command file, beginning with SIGNAL <name>, followed by multiple lines of PART & PAD 
+ *  identifiers. The SIGNAL command terminates with a single line starting with a semicolon (;)
+ *  The pound signs (#) after the PAD numbers, are used as a "comment" seperators of the SIGNAL command string, from
+ *  the "information columns" to the right, in this netlist report.
+ *  This method allows the netlist to be used, both as a TEXT report for printing, or as a "Command String File"
+ *  for execution as a script (SCR), on a copied BOARD, with deleted air wires, to create a Wire Wrapped version.
+ *  If this naming convention is undesirable, change the file name extension, in the OUTPUT statement, from SCR to TXT.
+ 
+ *  USE:
+ *  (1) Produce an Eagle Schematic and parts laid out Board file - as usual.
+ *  (2) Save SCH & BRD files immediately, before running this ULP - as a precaution. 
+ *  (3) Run WIRELIST.ULP -in the (opened) BOARD file, to produce the wire-wrap netlist file - then print/view.
+ *      Note: It would be convenient to set your board display GRID unit to (mil), when comparing to the NETLIST coordinates
+
+ *  OPTION: To produce an auxillary, DIFFERENT board version, which is air wire ROUTED as a WIRE-WRAP project board
+ *  (4)    CLOSE the schematic SCH file, and execute (DELETE SIGNALS;) to remove all previously autorouted board signals
+ *  (5)    EXECUTE the "<BRD-Name>_WW.SCR" script that was created above, in this (now) "wireless", but laid out board.
+ *
+ *         This now shows a board TOP VIEW of all the parts air-wired point-to-point as it would be, wire wrapped.
+ *         To verify runs, run (DISPLAY ... NONE) all layers except UNROUTED, DIMENSION, and PADS. Then use 
+ *         SHOW <signal-name> to see a high lighted constellation of that wire wrapped signal run.
+ *
+ *  CAUTION: Do NOT run RATSNEST or AUTOROUTER, on this new board - that would ruin the wire wrap routing, thus
+ *           recreating the original BOARD file. In fact, any manual file editing may change "optimized" wire lengths.
+ *           However, displaying a signal may show where a wire run can be shortened by breaking into a run and 
+ *           joining obvious islands that the this routing algorithm could not optimize, locally, and which
+ *           in quite rare situations, was forced to produce one overly long "joining" wire.
+
+ *  ROUTING ALGORITHM:
+ *  Very simple - starting with the original version, the netlist from the laid out board is first sorted by
+ *  radial distance from board origin, to every X/Y PAD coordinate for a signal. This is to identify
+ *  the "closest starting point" of each signal, to the lower left corner of the board. 
+ *  Next, with the starting point of a signal so defined, the remaining PADS of the signal are "BUBBLE SORTED"
+ *  by "shortest wire jump", nearest-neighbour pad distance, for each signal run. The DISPLAY may show some "exceptions"
+ *  with a few very long runs. These are caused by "groups of points" which are nearest to each other, but are not
+ *  near to another group. So, there must be one longer wire run, to join the two "groups".
+ *  Finally, the resulting WIRE WRAPPING NETLIST is printed to the SCR file, complete with EAGLE SIGNAL COMMANDS and 
+ *  proper command punctuation. This SCR can now be either printed/viewed, or run against the "air-wireless" board
+ *  to produce a fully wire wrapped BOARD file. This NETLIST can also be used for production of a wired board.
+ *  (To verify exact ROW and COLUMN position of wire wrap pin, divide the "X & Y mils" positions by 100).
+ **********************************************************************************************************************
+*/
+
+// WIRE WRAP NETLIST OF BOARD 
+
+if (board) board(B) {
+   output(filesetext(B.name, "_WW.scr")) {
+   printf("%s %s\n\n", "#", EAGLE_SIGNATURE);
+   printf("# WW_TESTPNTS.ULP Version 1.0  - Wire Wrapping Board Netlist / SCR Script File, generator\n\n");
+   printf("#  %s \n#  on %s \n\n# WIRE WRAP Netlist [sorted by shortest wire run] with Wire Wrap Board pin locations. \n", 
+                B.name, t2string(time()));
+ 
+   printf("# A FLAG (*) after Pin-X or before Pin-Y, means the PART's pad is not placed exactly on \n");
+   printf("# a standard 0.1 inch (2.54 mm) EAGLE BOARD grid line (Check: X & Y mils coordinates)\n");
+   printf("# This may be O.K. (e.g. thin board edge) - Pin Position is ROUNDED UP to CORRECT spacing.\n\n");
+
+   printf("\n\n%s %-*s %-*s %s %s %s %s %s \n","#", SIGNAL_NAME_LENGTH, "Net",
+                            ELEMENT_NAME_LENGTH, "Part",
+                            "  Pad"," Pin-X ,  Pin-Y ","    X mils ","     Y mils "," Wire Length mils"); 
+   B.signals(S) { 
+     numeric string Part[], Pad[];
+     real x[], y[], Len[], L, M;  
+     int cnt = 0, i, j, index[], Temp;
+
+     S.contactrefs(C) {
+       Part[cnt] = C.element.name;
+       Pad[cnt] = C.contact.name;
+       x[cnt] = u2mil(C.contact.x);
+       y[cnt] = u2mil(C.contact.y);
+
+/* Preset all wire lengths to distance from board origin
+   so that after sort, each signal's FIRST starting pad will be closest to board origin.
+*/  
+       Len[cnt] = sqrt((x[cnt]*x[cnt]) + (y[cnt]*y[cnt])); // Radial distance of PAD
+       cnt++;
+       }
+  if (cnt) {
+      sort(cnt, index, Len); //sort the list by shortest wire to board origin
+
+
+// BUBBLE SORT signal list & create shortest point-to-point wiring sequences for each network set.
+
+	Len[index[0]] = 0;
+   for ( i = 0; i < cnt-1; i++) {
+	L = sqrt((x[index[i+1]]-x[index[i]])*(x[index[i+1]]-x[index[i]]) + (y[index[i+1]]-y[index[i]])*(y[index[i+1]]-y[index[i]]));
+	Len[index[i+1]] = L;
+	
+// Calculate:  PAD-to-PAD nearest neighbour distance - for this signal run, to find shortest wiring length
+ 
+	for ( j = i+1; j < cnt-1; j++)	{
+	    M = sqrt((x[index[j+1]]-x[index[i]])*(x[index[j+1]]-x[index[i]]) + (y[index[j+1]]-y[index[i]])*(y[index[j+1]]-y[index[i]]));
+		    if( M < L ) {
+				Temp = index[i+1];
+				index[i+1] = index[j+1];
+				index[j+1] = Temp;
+				Len[index[i+1]] = M;
+				Len[index[j+1]] = L;
+				L = M;
+		     }
+    	}
+    }
+  Len[index[cnt-1]] = sqrt((x[index[cnt-1]]-x[index[cnt-2]])*(x[index[cnt-1]]-x[index[cnt-2]]) + (y[index[cnt-1]]-y[index[cnt-2]])*(y[index[cnt-1]]-y[index[cnt-2]]));
+
+        printf("SIGNAL %-*s  \n", SIGNAL_NAME_LENGTH, S.name);
+        for ( i = 0; i < cnt; i++)  
+            printf("           %-*s %3s %s %4d %s %s %-4d %12f %12f %14f \n", 
+                    ELEMENT_NAME_LENGTH, Part[index[i]], 
+                    Pad[index[i]], "# ", (int(x[index[i]])+50)/100, frac(x[index[i]]/100)  ? "*,":" ,",
+		    frac(y[index[i]]/100)  ? "*":" ", (int(y[index[i]])+50)/100, 
+		    x[index[i]], y[index[i]],  Len[index[i]]); 
+	    printf(";\n");        
+   }
+
+   }
+   }
+}
+
+/*  ******** END OF ZEGLINSKI MODIFICATIONS ********
+
+
+/* NETLIST OF SCHEMATIC */
+
+if (schematic) schematic(SCH) {
+   output(filesetext(SCH.name, ".NET")) {
+   printf("%s\n\n", EAGLE_SIGNATURE);
+   printf("Netlist exported from %s at %s\n\n", SCH.name, t2string(time()));
+   printf("%-*s %-*s %s\n", NET_NAME_LENGTH, "Net",
+                            PART_NAME_LENGTH, "Part",
+                            "Pin");
+   SCH.nets(N) {
+     numeric string Part[], Pin[];
+     int cnt = 0, index[];
+
+     N.pinrefs(P) {
+       Part[cnt] = P.part.name;
+       Pin[cnt] = P.pin.name;
+       cnt++;
+       }
+     if (cnt) {
+        sort(cnt, index, Part, Pin);
+        printf("\n");
+        for (int i = 0; i < cnt; i++)
+            printf("%-*s %-*s %s\n", 
+                   NET_NAME_LENGTH, i ? "" : N.name, 
+                   PART_NAME_LENGTH, Part[index[i]], 
+                   Pin[index[i]]);
+        }
+     }
+   }
+ }
